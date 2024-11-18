@@ -72,7 +72,7 @@ def handle_node(id):
             node_doc = db.collection('nodes').document(id).get()
             app.logger.debug(f"Node document fetched: {node_doc}")
 
-            if node_doc.exists:  # Use 'exists' as a property, not a callable
+            if node_doc.exists:  # Use 'exists' as a property
                 node_data = node_doc.to_dict()
                 # Recursively fetch children for this node
                 node_data['children'] = fetch_children(node_data['id'])
@@ -90,13 +90,15 @@ def handle_node(id):
             # Validate incoming data
             data = request.json
             if not data:
+                app.logger.error("Invalid JSON payload: No data provided")
                 return jsonify({"error": "Invalid JSON payload"}), 400
 
             # Reference the node document
             node_ref = db.collection('nodes').document(id)
             node_doc = node_ref.get()
 
-            if not node_doc.exists():
+            if not node_doc.exists:
+                app.logger.error(f"Node not found for ID: {id}")
                 return jsonify({"error": "Node not found"}), 404
 
             # Filter allowed fields for update
@@ -105,9 +107,11 @@ def handle_node(id):
                        value in data.items() if key in allowed_fields}
 
             if not updates:
+                app.logger.error(f"No valid fields to update: {data}")
                 return jsonify({"error": "No valid fields to update"}), 400
 
             # Update Firestore document
+            app.logger.info(f"Updating node {id} with data: {updates}")
             node_ref.update(updates)
 
             # Respond with success
@@ -118,7 +122,7 @@ def handle_node(id):
             response.headers['Access-Control-Allow-Origin'] = 'https://defensio-46cf4.web.app'
             return response, 200
         except Exception as e:
-            app.logger.error(f"Error updating node: {e}")
+            app.logger.error(f"Error updating node {id}: {e}", exc_info=True)
             return jsonify({"error": "Failed to update node"}), 500
 
 

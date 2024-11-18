@@ -73,9 +73,20 @@ const NodeEditor = () => {
   const handleSave = async () => {
     if (!selectedNode) return;
     const updates = { title, body, notes };
-    await updateNodeProperty(selectedNode.id, updates);
-    const updatedNode = await fetchNode('root');
-    setRootNode(updatedNode);
+
+    try {
+      await updateNodeProperty(selectedNode.id, updates);
+
+      // Fetch the updated node hierarchy
+      const updatedNode = await fetchNode('root');
+      setRootNode(updatedNode);
+
+      // Ensure selectedNode reflects updated data
+      const newSelectedNode = updatedNode.children.find(node => node.id === selectedNode.id);
+      setSelectedNode(newSelectedNode || updatedNode);
+    } catch (error) {
+      console.error("Failed to save changes:", error);
+    }
   };
 
   const handleAddChild = async () => {
@@ -103,7 +114,7 @@ const NodeEditor = () => {
   };
 
   const renderHierarchy = (node, level = 0) => (
-    <div className="tree-node" key={node.id}>
+    <div className="tree-node" key={node.id} style={{ paddingLeft: `${level * 20}px` }}>
       <div
         className={`hierarchy-item ${selectedNode?.id === node.id ? 'selected' : ''}`}
         onClick={() => handleSelectNode(node)}
