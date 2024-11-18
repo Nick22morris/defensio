@@ -1,0 +1,37 @@
+swagger: "2.0"
+info:
+  title: "Flask Backend API"
+  version: "1.0.0"
+paths:
+  /node/{id}:
+    get:
+      operationId: "getNode"
+      x-google-backend:
+        address: https://flask-backend-572297073167.us-south1.run.app
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "A successful response"
+    options:
+      operationId: "optionsNode"
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+      responses:
+        "200":
+          description: "CORS preflight"
+      x-google-extensions:
+        cors:
+          allowMethods: "GET, POST, OPTIONS"
+          allowOrigins: ["https://defensio-46cf4.web.app"]
+          allowHeaders: "Content-Type, Authorization"
+
+# Disable API key requirement globally
+securityDefinitions: {}
+security: []

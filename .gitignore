@@ -21,3 +21,10 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# env
+venv
+__pycache__
+/api/.flaskvenv
+/api/firestore.json
+firebase.json

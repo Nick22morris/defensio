@@ -1,0 +1,221 @@
+/* Container styling */
+.node-editor-container {
+  display: flex;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Hierarchy tree styling with horizontal scrolling */
+.hierarchy-tree {
+  flex: 1;
+  max-width: 400px; /* Increased max-width for more space */
+  min-width: 350px; /* Ensures minimum width */
+  overflow-x: auto; /* Allows horizontal scrolling */
+  border: 1px solid #d1d9e6;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  white-space: nowrap; /* Prevents wrapping for horizontal scroll */
+}
+
+.hierarchy-tree h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 15px;
+}
+
+.tree-node {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.hierarchy-item {
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  background-color: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.hierarchy-item:hover {
+  background-color: #e6f0ff;
+}
+
+.hierarchy-item.selected {
+  background-color: #007bff;
+  color: white;
+}
+
+.tree-children {
+  margin-left: 20px;
+  border-left: 1px solid #d1d9e6;
+  padding-left: 10px;
+}
+
+/* Editor panel styling */
+.editor-panel {
+  flex: 2;
+  padding: 25px;
+  border: 1px solid #d1d9e6;
+  border-radius: 8px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.editor-panel h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.editor-panel label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #34495e;
+}
+
+.editor-panel input,
+.editor-panel textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border: 1px solid #d1d9e6;
+  border-radius: 6px;
+  font-size: 16px;
+  color: #2c3e50;
+  background-color: #f9fafb;
+  transition: border-color 0.3s ease;
+}
+
+.editor-panel input:focus,
+.editor-panel textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  background-color: #ffffff;
+}
+
+/* Spacing adjustments for buttons */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-right: 12px;
+  margin-top: 8px; /* Adds vertical spacing between buttons */
+}
+
+.icon-button.save {
+  background-color: #28a745;
+}
+
+.icon-button.add {
+  background-color: #007bff;
+}
+
+.icon-button.delete {
+  background-color: #dc3545;
+}
+
+.icon-button:hover {
+  transform: translateY(-2px);
+}
+
+.icon-button.delete:hover {
+  background-color: #c82333;
+}
+
+/* Children list styling */
+.child-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-radius: 6px;
+  background-color: #f9fafb;
+  margin-bottom: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.child-item:hover {
+  background-color: #f0f8ff;
+}
+
+/* Empty editor message styling */
+.empty-editor {
+  padding: 20px;
+  color: #7f8c8d;
+  font-size: 18px;
+  text-align: center;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  border: 1px dashed #d1d9e6;
+}
+.hierarchy-tree {
+  flex: 1;
+  min-width: 350px;
+  overflow-x: auto; /* Horizontal scrolling */
+  border: 1px solid #d1d9e6;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f9fafb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  white-space: nowrap; /* Ensures nodes don’t wrap */
+}
+
+/* Container for each level */
+.tree-node {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+/* Each item within the tree */
+.hierarchy-item {
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 5px;
+  border-radius: 6px;
+  background-color: #ffffff;
+  transition: background-color 0.2s ease;
+}
+
+.hierarchy-item:hover {
+  background-color: #e6f0ff;
+}
+
+.hierarchy-item.selected {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Indentation for each level */
+.tree-children {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20px; /* Indentation for each level */
+  padding-left: 0; /* Remove padding to align children with parent */
+  border-left: 1px solid #d1d9e6;
+}
+
+/* Horizontal scroll helper */
+.hierarchy-tree > .tree-node {
+  min-width: fit-content; /* Prevents truncation when scrolling */
+}

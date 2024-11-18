@@ -5,10 +5,7 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
+    <meta name="description" content="Web site created using create-react-app" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -24,10 +21,74 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <script src="https://cdn.tiny.cloud/1/jyoilj77xozk21jg7wxt1k5t9a0u7nisp896b6lmsyhd826j/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <title>Defensio</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script>
+      tinymce.init({
+        selector: "textarea",
+        plugins: [
+          // Core editing features
+          "anchor",
+          "autolink",
+          "charmap",
+          "codesample",
+          "emoticons",
+          "image",
+          "link",
+          "lists",
+          "media",
+          "searchreplace",
+          "table",
+          "visualblocks",
+          "wordcount",
+          // Your account includes a free trial of TinyMCE premium features
+          // Try the most popular premium features until Nov 25, 2024:
+          "checklist",
+          "mediaembed",
+          "casechange",
+          "export",
+          "formatpainter",
+          "pageembed",
+          "a11ychecker",
+          "tinymcespellchecker",
+          "permanentpen",
+          "powerpaste",
+          "advtable",
+          "advcode",
+          "editimage",
+          "advtemplate",
+          "ai",
+          "mentions",
+          "tinycomments",
+          "tableofcontents",
+          "footnotes",
+          "mergetags",
+          "autocorrect",
+          "typography",
+          "inlinecss",
+          "markdown",
+          // Early access to document converters
+          "importword",
+          "exportword",
+          "exportpdf",
+        ],
+        toolbar: "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat",
+        tinycomments_mode: "embedded",
+        tinycomments_author: "Author name",
+        mergetags_list: [
+          { value: "First.Name", title: "First Name" },
+          { value: "Email", title: "Email" },
+        ],
+        ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+        exportpdf_converter_options: { format: "Letter", margin_top: "1in", margin_right: "1in", margin_bottom: "1in", margin_left: "1in" },
+        exportword_converter_options: { document: { size: "Letter" } },
+        importword_converter_options: { formatting: { styles: "inline", resets: "inline", defaults: "inline" } },
+      });
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.
@@ -41,3 +102,24 @@
     -->
   </body>
 </html>
+<!-- // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDCxX0w-5_6NZEtXsQ5ZUtsDdIzR3YNuu0",
+  authDomain: "defensio-46cf4.firebaseapp.com",
+  projectId: "defensio-46cf4",
+  storageBucket: "defensio-46cf4.firebasestorage.app",
+  messagingSenderId: "572297073167",
+  appId: "1:572297073167:web:7cf7af062440d8ef47c97a",
+  measurementId: "G-XW302YJJFG"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app); -->

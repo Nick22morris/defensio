@@ -1,0 +1,71 @@
+/* hierarchy-navigator.css */
+.navigator-container {
+  padding: 20px;
+}
+
+.navigator-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #34495e;
+  margin-bottom: 15px;
+}
+
+.back-button {
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #2980b9;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #1a6a92;
+  transform: translateY(-2px);
+}
+
+.viewer-tab-button {
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  font-size: 14px;
+  color: white;
+  background-color: #28a745;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.viewer-tab-button:hover {
+  background-color: #218838;
+  transform: translateY(-2px);
+}
+
+.child-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.expanded-single-view {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.expanded-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.expanded-notes {
+  font-size: 16px;
+  color: #555;
+}

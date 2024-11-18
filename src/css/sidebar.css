@@ -1,0 +1,28 @@
+/* sidebar.css */
+.sidebar {
+    flex: 1;
+    background-color: #ecf0f1;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  .sidebar-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2980b9;
+    margin-bottom: 15px;
+  }
+  
+  .sidebar-text,
+  .highlight-text {
+    font-size: 14px;
+    color: #7f8c8d;
+    line-height: 1.5;
+  }
+  
+  .highlight-text {
+    font-weight: 500;
+    color: #2980b9;
+    margin-top: 10px;
+  }
