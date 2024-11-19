@@ -15,6 +15,7 @@ const fetchNode = async (id) => {
 const HierarchyNavigator = ({ onNodeChange }) => {
   const [currentNodeId, setCurrentNodeId] = useState('root');
   const [history, setHistory] = useState([]);
+  const [selectedNode, setSelectedNode] = useState(null); // Track the selected node
   const channel = new BroadcastChannel('node-updates');
 
   const { data: currentNode, error, isLoading } = useQuery({
@@ -22,17 +23,32 @@ const HierarchyNavigator = ({ onNodeChange }) => {
     queryFn: () => fetchNode(currentNodeId),
   });
 
-  // Update parent when current node changes
   useEffect(() => {
     if (currentNode) {
-      onNodeChange(currentNode); // Notify parent component
-      sendNodeToViewer(currentNode);
+      onNodeChange(currentNode); // Notify parent component about the current node
+      sendNodeToViewer(currentNode); // Send current node to the display view
     }
   }, [currentNode, onNodeChange]);
 
   const handleCellClick = (childNode) => {
-    setHistory([...history, currentNodeId]);
-    setCurrentNodeId(childNode.id);
+    if (selectedNode === childNode.id) {
+      // If the clicked node is already selected, unselect it
+      setSelectedNode(null);
+      onNodeChange(currentNode); // Reset notes to the current parent node
+      sendNodeToViewer(currentNode); // Reset display view to the parent node
+    } else if (childNode.children?.length > 0) {
+      // Navigate deeper if the node has children
+      setHistory([...history, currentNodeId]);
+      setCurrentNodeId(childNode.id);
+      setSelectedNode(null); // Clear selection when navigating
+      onNodeChange(childNode); // Update parent with the clicked node
+      sendNodeToViewer(childNode); // Update display view
+    } else {
+      // Highlight the node if it has no children
+      setSelectedNode(childNode.id);
+      onNodeChange(childNode); // Update parent with the selected node
+      sendNodeToViewer(childNode); // Update display view
+    }
   };
 
   const handleBackClick = () => {
@@ -40,6 +56,9 @@ const HierarchyNavigator = ({ onNodeChange }) => {
       const previousNodeId = history[history.length - 1];
       setCurrentNodeId(previousNodeId);
       setHistory(history.slice(0, -1));
+      setSelectedNode(null); // Clear selection when navigating back
+      onNodeChange(currentNode); // Update parent with the parent node
+      sendNodeToViewer(currentNode); // Update display view
     }
   };
 
@@ -60,11 +79,27 @@ const HierarchyNavigator = ({ onNodeChange }) => {
 
   return (
     <div className="navigator-container">
+      {/* Back Button */}
       {history.length > 0 && (
         <button onClick={handleBackClick} className="back-button">
           Back
         </button>
       )}
+
+      {/* Open Viewer Tab Button: Only visible at root */}
+      {history.length === 0 && (
+        <button
+          onClick={() => {
+            const viewerTab = window.open('/display', '_blank');
+            if (currentNode) sendNodeToViewer(currentNode); // Send current node to the viewer tab
+          }}
+          className="viewer-tab-button"
+        >
+          Open Viewer Tab
+        </button>
+      )}
+
+      {/* Children Display */}
       <div className="navigator-content">
         {currentNode?.children?.length > 0 ? (
           <div className="child-list">
@@ -75,6 +110,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
                 notes={childNode.notes || ''}
                 onClick={() => handleCellClick(childNode)}
                 hasChildren={childNode.children && childNode.children.length > 0}
+                isSelected={selectedNode === childNode.id} // Pass selected state
               />
             ))}
           </div>
