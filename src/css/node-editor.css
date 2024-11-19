@@ -1,27 +1,70 @@
 /* Container styling */
 .node-editor-container {
   display: flex;
-  gap: 30px;
+  flex-direction: column;
   max-width: 1200px;
   margin: 20px auto;
-  padding: 30px;
+  padding: 0;
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
 }
 
-/* Hierarchy tree styling with horizontal scrolling */
+/* Top header for Home button */
+.top-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #007bff;
+  /* Matches button color */
+  border-bottom: 1px solid #d1d9e6;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 10px 10px 0 0;
+  /* Rounded top corners */
+}
+
+.home-button {
+  padding: 5px 10px;
+  font-size: 14px;
+  background-color: white;
+  color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.home-button:hover {
+  background-color: #0056b3;
+  color: white;
+}
+
+/* Main content layout */
+.main-content {
+  display: flex;
+  gap: 30px;
+  margin-top: 10px;
+  padding: 20px;
+  background-color: #f9fafb;
+  border-radius: 0 0 10px 10px;
+  /* Rounded bottom corners */
+}
+
+/* Hierarchy tree layout */
 .hierarchy-tree {
   flex: 1;
-  max-width: 400px; /* Increased max-width for more space */
-  min-width: 350px; /* Ensures minimum width */
-  overflow-x: auto; /* Allows horizontal scrolling */
+  max-width: 500px;
+  min-width: 400px;
+  overflow-x: auto;
   border: 1px solid #d1d9e6;
   padding: 20px;
   border-radius: 8px;
-  background-color: #f9fafb;
+  background-color: white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  white-space: nowrap; /* Prevents wrapping for horizontal scroll */
+  white-space: nowrap;
 }
 
 .hierarchy-tree h3 {
@@ -35,6 +78,7 @@
   display: flex;
   flex-direction: column;
   margin-bottom: 10px;
+  min-width: fit-content;
 }
 
 .hierarchy-item {
@@ -42,7 +86,7 @@
   padding: 10px;
   margin-bottom: 5px;
   border-radius: 6px;
-  background-color: #ffffff;
+  background-color: white;
   transition: background-color 0.2s ease;
 }
 
@@ -61,14 +105,27 @@
   padding-left: 10px;
 }
 
+/* Editor wrapper */
+.editor-wrapper {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  /* Ensures editor stays inside the container */
+  overflow: hidden;
+  /* Prevents overflow issues */
+}
+
 /* Editor panel styling */
 .editor-panel {
-  flex: 2;
+  flex: 1;
   padding: 25px;
   border: 1px solid #d1d9e6;
   border-radius: 8px;
-  background-color: #ffffff;
+  background-color: white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+  /* Scroll if content exceeds the panel height */
 }
 
 .editor-panel h3 {
@@ -102,7 +159,7 @@
 .editor-panel textarea:focus {
   border-color: #007bff;
   outline: none;
-  background-color: #ffffff;
+  background-color: white;
 }
 
 /* Spacing adjustments for buttons */
@@ -118,7 +175,8 @@
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   margin-right: 12px;
-  margin-top: 8px; /* Adds vertical spacing between buttons */
+  margin-top: 8px;
+  /* Adds vertical spacing between buttons */
 }
 
 .icon-button.save {
@@ -166,56 +224,4 @@
   background-color: #f9fafb;
   border-radius: 8px;
   border: 1px dashed #d1d9e6;
-}
-.hierarchy-tree {
-  flex: 1;
-  min-width: 350px;
-  overflow-x: auto; /* Horizontal scrolling */
-  border: 1px solid #d1d9e6;
-  padding: 20px;
-  border-radius: 8px;
-  background-color: #f9fafb;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  white-space: nowrap; /* Ensures nodes don’t wrap */
-}
-
-/* Container for each level */
-.tree-node {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-  position: relative;
-}
-
-/* Each item within the tree */
-.hierarchy-item {
-  cursor: pointer;
-  padding: 10px;
-  margin-bottom: 5px;
-  border-radius: 6px;
-  background-color: #ffffff;
-  transition: background-color 0.2s ease;
-}
-
-.hierarchy-item:hover {
-  background-color: #e6f0ff;
-}
-
-.hierarchy-item.selected {
-  background-color: #007bff;
-  color: white;
-}
-
-/* Indentation for each level */
-.tree-children {
-  display: flex;
-  flex-direction: column;
-  margin-left: 20px; /* Indentation for each level */
-  padding-left: 0; /* Remove padding to align children with parent */
-  border-left: 1px solid #d1d9e6;
-}
-
-/* Horizontal scroll helper */
-.hierarchy-tree > .tree-node {
-  min-width: fit-content; /* Prevents truncation when scrolling */
 }

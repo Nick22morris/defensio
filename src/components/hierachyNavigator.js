@@ -11,10 +11,10 @@ const fetchNode = async (id) => {
   }
   return response.json();
 };
-const HierarchyNavigator = () => {
+
+const HierarchyNavigator = ({ onNodeChange }) => {
   const [currentNodeId, setCurrentNodeId] = useState('root');
   const [history, setHistory] = useState([]);
-  const [viewerTab, setViewerTab] = useState(null);
   const channel = new BroadcastChannel('node-updates');
 
   const { data: currentNode, error, isLoading } = useQuery({
@@ -22,11 +22,13 @@ const HierarchyNavigator = () => {
     queryFn: () => fetchNode(currentNodeId),
   });
 
+  // Update parent when current node changes
   useEffect(() => {
     if (currentNode) {
+      onNodeChange(currentNode); // Notify parent component
       sendNodeToViewer(currentNode);
     }
-  }, [currentNode]);
+  }, [currentNode, onNodeChange]);
 
   const handleCellClick = (childNode) => {
     setHistory([...history, currentNodeId]);
@@ -38,18 +40,6 @@ const HierarchyNavigator = () => {
       const previousNodeId = history[history.length - 1];
       setCurrentNodeId(previousNodeId);
       setHistory(history.slice(0, -1));
-    }
-  };
-
-  const handleOpenViewerTab = () => {
-    if (!viewerTab || viewerTab.closed) {
-      const newTab = window.open('/display', '_blank');
-      setViewerTab(newTab);
-    } else {
-      viewerTab.focus();
-    }
-    if (currentNode) {
-      sendNodeToViewer(currentNode);
     }
   };
 
@@ -75,9 +65,6 @@ const HierarchyNavigator = () => {
           Back
         </button>
       )}
-      <button onClick={handleOpenViewerTab} className="viewer-tab-button">
-        Open Viewer Tab
-      </button>
       <div className="navigator-content">
         {currentNode?.children?.length > 0 ? (
           <div className="child-list">
@@ -94,7 +81,6 @@ const HierarchyNavigator = () => {
         ) : (
           <div className="expanded-single-view">
             <h3 className="expanded-title">{currentNode.title}</h3>
-            <p className="expanded-notes">{currentNode.notes}</p>
           </div>
         )}
       </div>

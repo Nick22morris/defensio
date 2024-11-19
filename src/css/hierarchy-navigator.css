@@ -1,6 +1,8 @@
-/* hierarchy-navigator.css */
 .navigator-container {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .navigator-title {
@@ -65,7 +67,23 @@
   margin-bottom: 10px;
 }
 
-.expanded-notes {
+.notes-box {
+  padding: 20px;
+  background-color: #f9fafb;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.notes-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #34495e;
+  margin-bottom: 10px;
+}
+
+.notes-content {
   font-size: 16px;
   color: #555;
+  line-height: 1.5;
 }

@@ -10,17 +10,18 @@ load_dotenv()
 app = Flask(__name__)
 
 # Define allowed origins
-allowed_origins = [
-    "https://defensio-46cf4.web.app",
-    "http://localhost:3000",
-    "https://flask-backend-572297073167.us-south1.run.app"
-]
 
 # Apply CORS settings
 
 app = Flask(__name__)
 CORS(app, resources={
-     r"/*": {"origins": ["https://defensio-46cf4.web.app"]}}, supports_credentials=True)
+    r"/*": {"origins": [
+        "https://defensio-46cf4.web.app",
+        "http://localhost:3000",
+        "https://flask-backend-572297073167.us-south1.run.app"
+    ]}
+}, supports_credentials=True)
+
 
 db = firestore.Client()
 
@@ -56,29 +57,16 @@ def get_root():
 # Fetch a specific node and build its hierarchy
 
 
-@app.route('/node/<id>', methods=['GET', 'POST', 'OPTIONS'])
+@app.route('/node/<id>', methods=['GET', 'POST'])
 def handle_node(id):
-    if request.method == 'OPTIONS':
-        # Handle CORS preflight request
-        response = make_response()
-        response.headers['Access-Control-Allow-Origin'] = 'https://defensio-46cf4.web.app'
-        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
-        return response, 204  # No Content is typical for OPTIONS responses
-
     if request.method == 'GET':
         try:
             # Fetch the node document from Firestore
             node_doc = db.collection('nodes').document(id).get()
-            app.logger.debug(f"Node document fetched: {node_doc}")
-
-            if node_doc.exists:  # Use 'exists' as a property
+            if node_doc.exists:
                 node_data = node_doc.to_dict()
-                # Recursively fetch children for this node
                 node_data['children'] = fetch_children(node_data['id'])
-                response = make_response(jsonify(node_data))
-                response.headers['Access-Control-Allow-Origin'] = 'https://defensio-46cf4.web.app'
-                return response, 200
+                return jsonify(node_data), 200
             else:
                 return jsonify({"error": "Node not found"}), 404
         except Exception as e:
@@ -90,7 +78,6 @@ def handle_node(id):
             # Validate incoming data
             data = request.json
             if not data:
-                app.logger.error("Invalid JSON payload: No data provided")
                 return jsonify({"error": "Invalid JSON payload"}), 400
 
             # Reference the node document
@@ -98,29 +85,18 @@ def handle_node(id):
             node_doc = node_ref.get()
 
             if not node_doc.exists:
-                app.logger.error(f"Node not found for ID: {id}")
                 return jsonify({"error": "Node not found"}), 404
 
             # Filter allowed fields for update
             allowed_fields = ['title', 'body', 'notes']
             updates = {key: value for key,
                        value in data.items() if key in allowed_fields}
-
             if not updates:
-                app.logger.error(f"No valid fields to update: {data}")
                 return jsonify({"error": "No valid fields to update"}), 400
 
             # Update Firestore document
-            app.logger.info(f"Updating node {id} with data: {updates}")
             node_ref.update(updates)
-
-            # Respond with success
-            response = jsonify({
-                "message": "Node updated",
-                "updated_data": updates
-            })
-            response.headers['Access-Control-Allow-Origin'] = 'https://defensio-46cf4.web.app'
-            return response, 200
+            return jsonify({"message": "Node updated", "updated_data": updates}), 200
         except Exception as e:
             app.logger.error(f"Error updating node {id}: {e}", exc_info=True)
             return jsonify({"error": "Failed to update node"}), 500
@@ -177,7 +153,7 @@ def remove_child(id):
 
 @app.route('/test-cors', methods=['GET'])
 def test_cors():
-    return jsonify({"message": "CORS is working"}), 200
+    return jsonify({"message": "CORS is working my man!!!"}), 200
 
 
 if __name__ == '__main__':

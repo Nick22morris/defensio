@@ -133,73 +133,84 @@ const NodeEditor = () => {
 
   return (
     <div className="node-editor-container">
-      <div className="header">
+      <div className="top-header">
         <button onClick={() => navigate('/home')} className="home-button">
           Home
         </button>
       </div>
-      <div className="hierarchy-tree">
-        <h3>Hierarchy</h3>
-        <div style={{ overflowX: 'auto' }}>{renderHierarchy(rootNode)}</div>
+      <div className="main-content">
+        <div className="hierarchy-tree">
+          <h3>Hierarchy</h3>
+          <div style={{ overflowX: 'auto' }}>{renderHierarchy(rootNode)}</div>
+        </div>
+        <div className="editor-wrapper">
+          {selectedNode ? (
+            <div className="editor-panel">
+              <h3>Edit Node: {selectedNode.title}</h3>
+              <label>
+                Title:
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </label>
+              <label>
+                Body:
+                <Editor
+                  apiKey="jyoilj77xozk21jg7wxt1k5t9a0u7nisp896b6lmsyhd826j"
+                  value={body}
+                  init={{
+                    height: 300,
+                    menubar: true,
+                    plugins: 'advlist autolink lists link image charmap preview anchor searchreplace code fullscreen table help wordcount',
+                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                  }}
+                  onEditorChange={(content) => setBody(content)}
+                />
+              </label>
+              <label>
+                Notes:
+                <Editor
+                  apiKey="jyoilj77xozk21jg7wxt1k5t9a0u7nisp896b6lmsyhd826j"
+                  value={notes}
+                  init={{
+                    height: 300,
+                    menubar: true,
+                    plugins: 'advlist autolink lists link image charmap preview anchor searchreplace code fullscreen table help wordcount',
+                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                  }}
+                  onEditorChange={(content) => setNotes(content)}
+                />
+              </label>
+              <button className="icon-button save" onClick={handleSave}>
+                Save Changes
+              </button>
+              <h4>Manage Children</h4>
+              <button className="icon-button add" onClick={handleAddChild}>
+                Add Child
+              </button>
+              <ul>
+                {selectedNode.children?.map((child) => (
+                  <li key={child.id} className="child-item">
+                    {child.title}
+                    <button
+                      className="icon-button delete"
+                      onClick={() => handleRemoveChild(child.id)}
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : (
+            <div className="empty-editor">
+              <p>Select a node to edit its details here.</p>
+            </div>
+          )}
+        </div>
       </div>
-      {selectedNode ? (
-        <div className="editor-panel">
-          <h3>Edit Node: {selectedNode.title}</h3>
-          <label>
-            Title:
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
-          </label>
-          <label>
-            Body:
-            <Editor
-              apiKey="jyoilj77xozk21jg7wxt1k5t9a0u7nisp896b6lmsyhd826j"
-              value={body}
-              init={{
-                height: 300,
-                menubar: true,
-                plugins: 'advlist autolink lists link image charmap preview anchor searchreplace code fullscreen table help wordcount',
-                toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
-              }}
-              onEditorChange={(content) => setBody(content)}
-            />
-          </label>
-          <label>
-            Notes:
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </label>
-          <button className="icon-button save" onClick={handleSave}>
-            Save Changes
-          </button>
-          <h4>Manage Children</h4>
-          <button className="icon-button add" onClick={handleAddChild}>
-            Add Child
-          </button>
-          <ul>
-            {selectedNode.children?.map((child) => (
-              <li key={child.id} className="child-item">
-                {child.title}
-                <button
-                  className="icon-button delete"
-                  onClick={() => handleRemoveChild(child.id)}
-                >
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <div className="empty-editor">
-          <p>Select a node to edit its details here.</p>
-        </div>
-      )}
     </div>
   );
 };

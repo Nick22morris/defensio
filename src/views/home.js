@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import HierarchyNavigator from '../components/hierachyNavigator';
-import '.././css/home.css'; // Ensure App.css is imported
+import NotesView from '../components/noteView'; // Import NotesView
+import '.././css/home.css';
+
 const Home = () => {
+  const [currentNode, setCurrentNode] = useState(null);
+
   return (
     <div className="page-container">
       {/* Header Section */}
@@ -26,9 +30,12 @@ const Home = () => {
         {/* Hierarchy Navigator Section */}
         <section className="navigator-section">
           <h2 className="navigator-title">Explore Topics</h2>
-          <HierarchyNavigator />
+          <HierarchyNavigator onNodeChange={setCurrentNode} />
         </section>
       </main>
+
+      {/* Notes Section */}
+      {currentNode?.notes && <NotesView notes={currentNode.notes} />}
 
       {/* Footer Section */}
       <footer className="footer">
