@@ -1,7 +1,7 @@
 /* Button to open the modal */
 .guideline-button {
     padding: 10px 20px;
-    font-size: 16px;
+    font-size: 14px;
     background-color: #007bff;
     color: white;
     border: none;
@@ -88,4 +88,40 @@
   
   .guideline-section li {
     margin-bottom: 8px;
+  }
+  /* Close button styles */
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: transparent;
+    color: #ff0000;
+    font-size: 24px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .close-button:hover {
+    color: #cc0000;
+  }
+  
+  /* Footer with Done button */
+  .modal-footer {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .done-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .done-button:hover {
+    background-color: #218838;
   }

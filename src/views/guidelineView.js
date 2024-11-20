@@ -104,6 +104,12 @@ const GuidelineViewer = () => {
                                 <li><strong>Regular Backups:</strong> Take regular backups of the database or document major edits separately, as there is no built-in undo function.</li>
                             </ul>
                         </section>
+                        {/* "Done" Button */}
+                        <div className="modal-footer">
+                            <button onClick={toggleModal} className="done-button">
+                                Done
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
