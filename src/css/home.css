@@ -116,3 +116,11 @@
   color: #555;
   line-height: 1.6;
 }
+.sidebar-logo {
+  width: 50px; /* Adjust as needed */
+  height: auto;
+  margin-bottom: 15px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}

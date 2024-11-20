@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '.././App.css';
 import { Editor } from '@tinymce/tinymce-react';
 import { useNavigate } from 'react-router-dom';
+import GuidelineViewer from './guidelineView';
 import axios from 'axios';
 
 const fetchNode = async (id) => {
@@ -52,6 +53,7 @@ const NodeEditor = () => {
   const [notes, setNotes] = useState('');
 
   useEffect(() => {
+    // Fetch the root node when the component mounts
     fetchNode('root')
       .then((node) => {
         setRootNode(node);
@@ -63,6 +65,24 @@ const NodeEditor = () => {
       .catch(console.error);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      // Check for Command+S or Ctrl+S
+      if ((event.metaKey || event.ctrlKey) && event.key === 's') {
+        event.preventDefault(); // Prevent default browser behavior
+        handleSave(); // Trigger save functionality
+      }
+    };
+
+    // Add event listener for keydown
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedNode, title, body, notes]); // Re-run if these dependencies change
+
   const handleSelectNode = (node) => {
     setSelectedNode(node);
     setTitle(node.title);
@@ -71,7 +91,7 @@ const NodeEditor = () => {
   };
 
   const handleSave = async () => {
-    if (!selectedNode) return;
+    if (!selectedNode) return; // Do nothing if no node is selected
     const updates = { title, body, notes };
 
     try {
@@ -82,10 +102,10 @@ const NodeEditor = () => {
       setRootNode(updatedNode);
 
       // Ensure selectedNode reflects updated data
-      const newSelectedNode = updatedNode.children.find(node => node.id === selectedNode.id);
+      const newSelectedNode = updatedNode.children.find((node) => node.id === selectedNode.id);
       setSelectedNode(newSelectedNode || updatedNode);
     } catch (error) {
-      console.error("Failed to save changes:", error);
+      console.error('Failed to save changes:', error);
     }
   };
 
@@ -137,6 +157,7 @@ const NodeEditor = () => {
         <button onClick={() => navigate('/home')} className="home-button">
           Home
         </button>
+        <GuidelineViewer />
       </div>
       <div className="main-content">
         <div className="hierarchy-tree">
