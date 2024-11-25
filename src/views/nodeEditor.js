@@ -12,12 +12,13 @@ const fetchNode = async (id) => {
   }
   return response.json();
 };
+
 const updateNodeProperty = async (id, updates) => {
   try {
     const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/node/${id}`, updates);
     return response.data;
   } catch (error) {
-    console.error("Error updating node:", error);
+    console.error('Error updating node:', error);
     throw new Error(`Failed to update node: ${error.message}`);
   }
 };
@@ -27,7 +28,7 @@ const addChildNode = async (parentId, childNode) => {
     const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/node/${parentId}/add-child`, childNode);
     return response.data;
   } catch (error) {
-    console.error("Error adding child node:", error);
+    console.error('Error adding child node:', error);
     throw new Error('Failed to add child node');
   }
 };
@@ -39,7 +40,7 @@ const removeChildNode = async (parentId, childId) => {
     });
     return response.data;
   } catch (error) {
-    console.error("Error removing child node:", error);
+    console.error('Error removing child node:', error);
     throw new Error('Failed to remove child node');
   }
 };
@@ -51,6 +52,10 @@ const NodeEditor = () => {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [notes, setNotes] = useState('');
+
+  // State for resizable panels
+  const [treeWidth, setTreeWidth] = useState(400); // Initial width of hierarchy tree
+  const [isResizing, setIsResizing] = useState(false); // Track if resizing is active
 
   useEffect(() => {
     // Fetch the root node when the component mounts
@@ -81,7 +86,7 @@ const NodeEditor = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [selectedNode, title, body, notes]); // Re-run if these dependencies change
+  }, [selectedNode, title, body, notes]);
 
   const handleSelectNode = (node) => {
     setSelectedNode(node);
@@ -133,6 +138,36 @@ const NodeEditor = () => {
     }));
   };
 
+  // Handle resizing
+  const handleMouseDown = () => {
+    setIsResizing(true);
+    document.body.style.userSelect = 'none'; // Disable text selection
+  };
+
+  const handleMouseUp = () => {
+    setIsResizing(false);
+    document.body.style.userSelect = ''; // Re-enable text selection
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isResizing) return;
+    setTreeWidth(Math.max(200, e.clientX)); // Ensure a minimum width of 200px
+  };
+
+  useEffect(() => {
+    if (isResizing) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+    } else {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    }
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
+
   const renderHierarchy = (node, level = 0) => (
     <div className="tree-node" key={node.id} style={{ paddingLeft: `${level * 20}px` }}>
       <div
@@ -160,10 +195,26 @@ const NodeEditor = () => {
         <GuidelineViewer />
       </div>
       <div className="main-content">
-        <div className="hierarchy-tree">
+        <div
+          className="hierarchy-tree"
+          style={{
+            flex: `0 0 ${treeWidth}px`,
+            maxWidth: `${treeWidth}px`,
+            minWidth: '200px',
+          }}
+        >
           <h3>Hierarchy</h3>
           <div style={{ overflowX: 'auto' }}>{renderHierarchy(rootNode)}</div>
         </div>
+        <div
+          className="resizer"
+          onMouseDown={handleMouseDown}
+          style={{
+            width: '10px',
+            cursor: 'col-resize',
+            backgroundColor: '#ddd',
+          }}
+        ></div>
         <div className="editor-wrapper">
           {selectedNode ? (
             <div className="editor-panel">
