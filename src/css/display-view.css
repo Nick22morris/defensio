@@ -99,7 +99,7 @@
     list-style-position: inside; /* Ensure the list numbers/bullets align with the text */
     line-height: 1; /* Improve readability with proper spacing */
     color: #ecf0f1; /* Ensure consistent color */
-    font-size: 1.1em;
+    font-size: clamp(0.4em, 78%, 1.4em); 
 }
 
 /* List Items */
