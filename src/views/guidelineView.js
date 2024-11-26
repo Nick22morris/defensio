@@ -73,7 +73,7 @@ const GuidelineViewer = () => {
                                     <ul>
                                         <li><strong>Title:</strong> A concise, descriptive label (e.g., Matthew 16 - Keys to the Kingdom).</li>
                                         <li><strong>Body:</strong> Neatly formatted and properly cited content (e.g., verses, quotes, or statistics).</li>
-                                        <li><strong>Notes:</strong> A duplicate of the body with citations, plus any additional user notes.</li>
+                                        <li><strong>Notes:</strong>Contains any additional user notes. The software will automatically give the user a view of what's being displayed so they have access to the selected quote.</li>
                                     </ul>
                                 </li>
                             </ul>
