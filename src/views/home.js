@@ -1,46 +1,61 @@
 import React, { useState } from 'react';
 import HierarchyNavigator from '../components/hierachyNavigator';
-import NotesView from '../components/noteView'; // Import NotesView
+import NotesView from '../components/noteView';
 import '.././css/home.css';
 
 const Home = () => {
   const [currentNode, setCurrentNode] = useState(null);
 
   return (
-    <div className="page-container">
+    <div className="hq-container">
       {/* Header Section */}
-      <header className="header">
-        <h1 className="header-title">Doctrine Deck</h1>
-        <p className="header-subtitle">
-          A modern resource for everyday Catholics – Defend the faith with ease.
-        </p>
+      <header className="hq-header">
+        <div className="hq-header-content">
+          <h1 className="hq-header-title">Standoff HQ</h1>
+          <p className="hq-header-subtitle">
+            Your frontline resource for defending Catholicism. Engage, educate, and stand firm.
+          </p>
+        </div>
       </header>
 
       {/* Main Content Section */}
-      <main className="main-content">
+      <main className="hq-main">
         {/* Sidebar Section */}
-        <aside className="sidebar">
-          <img src="/logo.png" alt="Defensio Logo" className="sidebar-logo" />
-          <h2 className="sidebar-title">Welcome to Doctrine Deck</h2>
-          <p className="sidebar-text">
-            Dive into a collection of answers and resources crafted for common Catholic critiques. Explore objections, find references, and learn structured arguments to engage thoughtfully.
+        <aside className="hq-sidebar">
+          <img src="/logo2.png" alt="Defensio Logo" className="hq-sidebar-logo" />
+          <h2 className="hq-sidebar-title">About Standoff HQ</h2>
+          <p className="hq-sidebar-text">
+            Navigate Catholic objections and find structured responses. Whether you’re a seasoned apologist or a curious learner, Standoff HQ equips you with the tools to engage meaningfully.
           </p>
-          <p className="highlight-text">Navigate topics using the panel on the right.</p>
         </aside>
 
         {/* Hierarchy Navigator Section */}
-        <section className="navigator-section">
-          <h2 className="navigator-title">Explore Topics</h2>
+        <section className="hq-navigator">
+          <h2 className="hq-section-title">Explore Topics</h2>
           <HierarchyNavigator onNodeChange={setCurrentNode} />
+        </section>
+
+        {/* Notes Section */}
+        <section className={`hq-notes ${currentNode?.notes || currentNode?.body ? 'visible' : ''}`}>
+          <div className="hq-notes-header">
+            {currentNode?.title || "No Topic Selected"}
+          </div>
+          {currentNode?.body && (
+            <NotesView notes={currentNode.body} title={"Quote"} />
+          )}
+          {currentNode?.notes ? (
+            <NotesView notes={currentNode.notes} title={"Notes"} />
+          ) : (
+            !currentNode?.body && (
+              <p className="hq-notes-placeholder">Select a topic to view notes.</p>
+            )
+          )}
         </section>
       </main>
 
-      {/* Notes Section */}
-      {currentNode?.notes && <NotesView notes={currentNode.notes} />}
-
       {/* Footer Section */}
-      <footer className="footer">
-        <p>&copy; 2024 Doctrine Deck. Strengthening faith through understanding.</p>
+      <footer className="hq-footer">
+        <p>&copy; 2024 Standoff HQ. Strengthening faith through understanding.</p>
       </footer>
     </div>
   );
