@@ -19,21 +19,24 @@
   }
   
   .slide-title {
-    font-size: 3em;
+    font-size: 3em; /* Slightly reduced font size to accommodate long titles */
     font-weight: bold;
     margin-bottom: 0.5em;
     color: #ecf0f1;
+    max-width: 100%; /* Increase the width to span most of the screen */
+    word-wrap: break-word; /* Ensure long words wrap */
+    text-align: center; /* Keep title text centered */
   }
   
   .slide-subtitle {
-    font-size: 2em;
+    font-size: 3.5em;
     font-weight: 300;
     color: #bdc3c7;
   }
   
   /* Content Slide */
   .content-slide {
-    max-width: 800px;
+    max-width: 80%;
     text-align: center;
     animation: fadeIn 0.5s ease-in-out;
   }
@@ -41,7 +44,7 @@
   /* Slide Body Styling */
 /* Slide Body Styling */
 .slide-body {
-  font-size: 1.4em; /* Slightly larger font size for readability */
+  font-size: 1.7em; /* Slightly larger font size for readability */
   line-height: 1.5; /* Adjusted for better spacing between lines */
   text-align: left; /* Keep text left-aligned */
   color: #ecf0f1;
@@ -87,6 +90,15 @@
 
 .slide-body a:hover {
   color: #16a085; /* Slightly darker teal on hover */
+}
+.slide-question {
+  font-size: 6em; /* Slightly reduced font size to accommodate long titles */
+  font-weight: bold;
+  margin-bottom: 0.5em;
+  color: #ecf0f1;
+  max-width: 100%; /* Increase the width to span most of the screen */
+  word-wrap: break-word; /* Ensure long words wrap */
+  text-align: center; /* Keep title text centered */
 }
   
   /* Animations */

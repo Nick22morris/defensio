@@ -23,7 +23,7 @@ const DisplayView = () => {
     <div className="display-view">
       {!hasBody ? (
         <div className="default-slide">
-          <h1 className="slide-title">I am a Catholic</h1>
+          <h1 className="slide-question">I am a Catholic</h1>
           <p className="slide-subtitle">Ask Me Questions</p>
         </div>
       ) : (
