@@ -21,9 +21,10 @@ html, body {
   box-sizing: border-box;
   /* Rounded top corners */
 }
-
-.home-button {
-  padding: 5px 10px;
+/* Shared button styles for Home and Modal buttons */
+.top-header .home-button,
+.top-header .modal-button {
+  padding: 5px 100px;
   font-size: 14px;
   background-color: white;
   color: #007bff;
@@ -31,9 +32,11 @@ html, body {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
+  margin-right: 10px; /* Space between buttons */
 }
 
-.home-button:hover {
+.top-header .home-button:hover,
+.top-header .modal-button:hover {
   background-color: #0056b3;
   color: white;
 }

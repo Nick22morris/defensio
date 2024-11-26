@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import '../css/viewer.css';
-
+import { useNavigate } from 'react-router-dom';
 const GuidelineViewer = () => {
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleModal = () => {
@@ -16,6 +17,9 @@ const GuidelineViewer = () => {
     return (
         <div>
             {/* Button to Open the Overlay */}
+            <button onClick={() => navigate('/')} className="guideline-button">
+                Home
+            </button>
             <button onClick={toggleModal} className="guideline-button">
                 View User Manual
             </button>

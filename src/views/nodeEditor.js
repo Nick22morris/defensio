@@ -54,7 +54,7 @@ const NodeEditor = () => {
   const [notes, setNotes] = useState('');
 
   // State for resizable panels
-  const [treeWidth, setTreeWidth] = useState(400); // Initial width of hierarchy tree
+  const [treeWidth, setTreeWidth] = useState(550); // Initial width of hierarchy tree
   const [isResizing, setIsResizing] = useState(false); // Track if resizing is active
 
   useEffect(() => {
@@ -97,20 +97,42 @@ const NodeEditor = () => {
 
   const handleSave = async () => {
     if (!selectedNode) return; // Do nothing if no node is selected
+
     const updates = { title, body, notes };
 
     try {
+      // Save updates to the selected node
       await updateNodeProperty(selectedNode.id, updates);
 
-      // Fetch the updated node hierarchy
-      const updatedNode = await fetchNode('root');
-      setRootNode(updatedNode);
+      // Fetch the updated hierarchy from the server
+      const updatedRootNode = await fetchNode("root");
 
-      // Ensure selectedNode reflects updated data
-      const newSelectedNode = updatedNode.children.find((node) => node.id === selectedNode.id);
-      setSelectedNode(newSelectedNode || updatedNode);
+      // Update the root node
+      setRootNode(updatedRootNode);
+
+      // Find the updated version of the selected node
+      const findUpdatedNode = (node, id) => {
+        if (node.id === id) return node;
+        if (node.children) {
+          for (const child of node.children) {
+            const found = findUpdatedNode(child, id);
+            if (found) return found;
+          }
+        }
+        return null;
+      };
+
+      const newSelectedNode = findUpdatedNode(updatedRootNode, selectedNode.id);
+
+      // Update the selected node if it exists in the updated tree
+      if (newSelectedNode) {
+        setSelectedNode(newSelectedNode);
+      } else {
+        console.warn("Selected node not found in updated hierarchy. Defaulting to root.");
+        setSelectedNode(updatedRootNode); // Fallback to root
+      }
     } catch (error) {
-      console.error('Failed to save changes:', error);
+      console.error("Failed to save changes:", error);
     }
   };
 
@@ -189,9 +211,6 @@ const NodeEditor = () => {
   return (
     <div className="node-editor-container">
       <div className="top-header">
-        <button onClick={() => navigate('/home')} className="home-button">
-          Home
-        </button>
         <GuidelineViewer />
       </div>
       <div className="main-content">
