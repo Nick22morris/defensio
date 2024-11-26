@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./views/home";
 import Login from "./views/Login";
 import PrivateRoute from "./components/PrivateRoute";
-import HierarchyNavigator from "./components/hierachyNavigator";
 import NodeEditor from "./views/nodeEditor";
 import DisplayView from "./views/displayView";
 import GuidelineViewer from "./views/guidelineView";
@@ -14,6 +13,23 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 const queryClient = new QueryClient();
 
 const App = () => {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    // Detect if the user is on a mobile device
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    // Initial check
+    checkMobile();
+    // Add an event listener for screen resizing
+    window.addEventListener("resize", checkMobile);
+    // Clean up the event listener on component unmount
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+  if (isMobile) {
+    // Display a message for mobile users
+    return (
+      <MobileWarningScreen />
+    );
+  }
   return (
     <QueryClientProvider client={queryClient}>
       <Router>

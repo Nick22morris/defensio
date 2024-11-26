@@ -47,7 +47,7 @@ const MobileWarningScreen = () => {
                         color: "#f0f8ff",
                     }}
                 >
-                    (Psalm 23:2-3, ESV)
+                    Psalm 23:2-3
                 </p>
                 <p
                     className="sky-subtext"
