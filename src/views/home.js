@@ -11,7 +11,7 @@ const Home = () => {
       {/* Header Section */}
       <header className="hq-header">
         <div className="hq-header-content">
-          <h1 className="hq-header-title">Standoff HQ</h1>
+          <h1 className="hq-header-title">Catholic Defense Hub</h1>
           <p className="hq-header-subtitle">
             Your frontline resource for defending Catholicism. Engage, educate, and stand firm.
           </p>
@@ -23,7 +23,7 @@ const Home = () => {
         {/* Sidebar Section */}
         <aside className="hq-sidebar">
           <img src="/logo2.png" alt="Defensio Logo" className="hq-sidebar-logo" />
-          <h2 className="hq-sidebar-title">About Standoff HQ</h2>
+          <h2 className="hq-sidebar-title">About Catholic Defense Hub</h2>
           <p className="hq-sidebar-text">
             Navigate Catholic objections and find structured responses. Whether you’re a seasoned apologist or a curious learner, Standoff HQ equips you with the tools to engage meaningfully.
           </p>
@@ -55,7 +55,7 @@ const Home = () => {
 
       {/* Footer Section */}
       <footer className="hq-footer">
-        <p>&copy; 2024 Standoff HQ. Strengthening faith through understanding.</p>
+        <p>&copy; 2024 Catholic Defense Hub. Strengthening faith through understanding.</p>
       </footer>
     </div>
   );
