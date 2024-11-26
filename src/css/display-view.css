@@ -38,13 +38,55 @@
     animation: fadeIn 0.5s ease-in-out;
   }
   
-  .slide-body {
-    font-size: 1.3em; /* Smaller font size */
-    line-height: 1.6;
-    text-align: left; /* Left-aligned text */
-    color: #ecf0f1;
-    margin-top: 20px;
-    white-space: pre-wrap; /* Preserve line breaks */
+  /* Slide Body Styling */
+/* Slide Body Styling */
+.slide-body {
+  font-size: 1.4em; /* Slightly larger font size for readability */
+  line-height: 1.5; /* Adjusted for better spacing between lines */
+  text-align: left; /* Keep text left-aligned */
+  color: #ecf0f1;
+  margin-top: 20px;
+  white-space: pre-wrap; /* Preserve line breaks */
+}
+
+/* Paragraphs: Reduce Vertical Gaps */
+.slide-body p {
+  margin: 0; /* Remove default margins */
+  padding: 5px 0; /* Minimal vertical padding between paragraphs */
+}
+
+/* Div Elements: Controlled Spacing */
+.slide-body div {
+  margin: 0; /* Reset default margins */
+  padding: 5px 0; /* Minimal vertical padding for divs */
+}
+
+/* Reduce Spacing Between Nested Elements */
+.slide-body div > div {
+  margin: 0;
+  padding: 3px 0;
+}
+
+/* Optional: Adjust Heading Styles Inside the Body */
+.slide-body strong {
+  font-weight: bold;
+  color: #f1c40f; /* Highlighted text in bold for better emphasis */
+}
+
+/* Italicized Text Styling */
+.slide-body em {
+  font-style: italic;
+  color: #bdc3c7; /* Slightly muted for differentiation */
+}
+
+/* Link Styling for Consistency */
+.slide-body a {
+  color: #1abc9c; /* Teal for clickable links */
+  text-decoration: underline;
+}
+
+.slide-body a:hover {
+  color: #16a085; /* Slightly darker teal on hover */
 }
   
   /* Animations */

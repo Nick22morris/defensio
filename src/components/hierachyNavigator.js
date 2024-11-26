@@ -95,7 +95,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
           }}
           className="viewer-tab-button"
         >
-          Open Viewer Tab
+          Launch Street Mode
         </button>
       )}
 
