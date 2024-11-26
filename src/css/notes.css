@@ -20,3 +20,43 @@
     color: #555;
     line-height: 1.6;
 }
+
+/* Main Lists */
+.notes-content ol,
+.notes-content ul {
+    margin: 10px 0; /* Add slight vertical spacing */
+    padding-left: 20px; /* Indent main lists slightly */
+    list-style-position: outside; /* Ensure bullets/numbers align correctly */
+}
+
+/* Nested Lists */
+.notes-content ol li > ol,
+.notes-content ul li > ul {
+    margin-top: 5px; /* Add slight spacing for nested lists */
+    padding-left: 20px; /* Increase indentation for nested lists */
+    list-style-type: circle; /* Change bullet style for nested unordered lists */
+    font-size: 15px; /* Slightly smaller font for nested lists */
+}
+
+/* Adjust Nested List Items */
+.notes-content ol li > ol li,
+.notes-content ul li > ul li {
+    margin-bottom: 5px; /* Add consistent spacing between nested list items */
+}
+
+/* Bullet and Number Styling */
+.notes-content ul {
+    list-style-type: disc; /* Use discs for unordered lists */
+}
+
+.notes-content ul ul {
+    list-style-type: circle; /* Use circles for nested unordered lists */
+}
+
+.notes-content ol {
+    list-style-type: decimal; /* Ensure ordered lists display correctly */
+}
+
+.notes-content ol ol {
+    list-style-type: lower-alpha; /* Use alphabetic markers for nested ordered lists */
+}
