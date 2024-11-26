@@ -91,6 +91,51 @@
 .slide-body a:hover {
   color: #16a085; /* Slightly darker teal on hover */
 }
+/* List Styling for Ordered and Unordered Lists */
+.slide-body ol,
+.slide-body ul {
+    margin: 0; /* Remove default margins */
+    padding: 0 1px; /* Add controlled padding for indentation */
+    list-style-position: inside; /* Ensure the list numbers/bullets align with the text */
+    line-height: 1; /* Improve readability with proper spacing */
+    color: #ecf0f1; /* Ensure consistent color */
+    font-size: 1.1em;
+}
+
+/* List Items */
+.slide-body li {
+  display: list-item; /* Ensure proper list item behavior */
+  list-style-position: outside; /* Keep list markers outside */
+}
+
+/* Ordered List Numbers */
+.slide-body ol {
+    list-style-type: decimal; /* Ensure numbered lists display correctly */
+}
+
+/* Unordered List Bullets */
+.slide-body ul {
+    list-style-type: disc; /* Use discs for unordered lists */
+}
+
+/* Nested Lists */
+.slide-body ol li > ol,
+.slide-body ul li > ul {
+    margin-top: 0px; /* Add slight spacing for nested lists */
+}
+
+/* Adjust Nested List Items */
+.slide-body ol li > ol li,
+.slide-body ul li > ul li {
+    margin-bottom: 0px; /* Reduce spacing for nested list items */
+}
+
+/* Optional: Handle Block Elements in Lists */
+.slide-body ol p,
+.slide-body ul p {
+    margin: 0; /* Remove excessive gaps in paragraphs within list items */
+    padding: 0px 0; /* Consistent spacing for paragraphs inside lists */
+}
 .slide-question {
   font-size: 6em; /* Slightly reduced font size to accommodate long titles */
   font-weight: bold;
