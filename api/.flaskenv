@@ -1,0 +1,4 @@
+FLASK_APP=main.py
+FLASK_ENV=development
+GOOGLE_APPLICATION_CREDENTIALS=./firebase.json
+SECRET_KEY=testing1234321

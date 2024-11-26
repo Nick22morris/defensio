@@ -1,19 +1,23 @@
-from flask import Flask
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, session
+from firebase_admin import auth as firebase_auth, credentials, initialize_app
 from google.cloud import firestore
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
+from datetime import timedelta
+
 
 # Load environment variables from .flaskenv
 load_dotenv()
 app = Flask(__name__)
 
-# Define allowed origins
+SERVICE_ACCOUNT_KEY_PATH = "firebase.json"
+
+# Initialize Firebase Admin SDK
+cred = credentials.Certificate(SERVICE_ACCOUNT_KEY_PATH)
+initialize_app(cred)
 
 # Apply CORS settings
-
-app = Flask(__name__)
 CORS(app, resources={
     r"/*": {"origins": [
         "https://defensio-46cf4.web.app",
@@ -21,6 +25,22 @@ CORS(app, resources={
         "https://flask-backend-572297073167.us-south1.run.app"
     ]}
 }, supports_credentials=True)
+
+
+@app.route('/session-login', methods=['POST'])
+def session_login():
+    data = request.json
+    id_token = data.get('idToken')
+
+    if not id_token:
+        return jsonify({"error": "ID token is required"}), 400
+
+    try:
+        # Verify the token
+        decoded_token = firebase_auth.verify_id_token(id_token)
+        return jsonify({"message": "Token is valid", "user": decoded_token}), 200
+    except Exception as e:
+        return jsonify({"error": "Invalid token"}), 401
 
 
 db = firestore.Client()

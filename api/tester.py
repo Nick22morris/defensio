@@ -1,0 +1,18 @@
+import firebase_admin
+from firebase_admin import auth as firebase_auth, credentials
+
+# Initialize Firebase Admin SDK
+cred = credentials.Certificate("firebase.json")
+firebase_admin.initialize_app(cred)
+
+
+id_token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IjkyODg2OGRjNDRlYTZhOThjODhiMzkzZDM2NDQ1MTM2NWViYjMwZDgiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vZGVmZW5zaW8tNDZjZjQiLCJhdWQiOiJkZWZlbnNpby00NmNmNCIsImF1dGhfdGltZSI6MTczMjYwNTgyOCwidXNlcl9pZCI6Ikl6b043Y2EzbGRmUmJJVndqZWp5VnZpNk1SRTMiLCJzdWIiOiJJem9ON2NhM2xkZlJiSVZ3amVqeVZ2aTZNUkUzIiwiaWF0IjoxNzMyNjA1ODI4LCJleHAiOjE3MzI2MDk0MjgsImVtYWlsIjoiYUBiLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiZmlyZWJhc2UiOnsiaWRlbnRpdGllcyI6eyJlbWFpbCI6WyJhQGIuY29tIl19LCJzaWduX2luX3Byb3ZpZGVyIjoicGFzc3dvcmQifX0.jj1zAJjowPEWZQwFbNHh497G-cqSv7NLn4IQ9j1dng-K_O86I0cNhoWLt984p9mzuggQnHH9_36omavqoXxwSUWLi2E7MS1I1tLBeLp2KbGhigIA6MGrL9jHMWpgjMwRRXDdrAoau1tXc6wCD9jvkUeoTluGWlxzzYG4XJCELmMVlMpLfT2yOEi8iz9rfiOZME63vXJC1QwicZd8LCONH06BFzqMsRRLoRuhRKwHA29oz359BONHk0SEwVjzmFuJHS603eiWs3Gb2lPNjrrlR85taJRNnz6AzQ7fpKXy7U-5AhH5IvAene8luEffcVQdfHUZwnW24JjBbEdniXtqng"
+
+try:
+    # Verify the ID token
+    decoded_token = firebase_auth.verify_id_token(id_token)
+    print("Decoded Token:", decoded_token)
+except firebase_admin.exceptions.FirebaseError as e:
+    print("Error verifying token:", e)
+except Exception as e:
+    print("General error:", e)
