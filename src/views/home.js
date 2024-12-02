@@ -55,7 +55,7 @@ const Home = () => {
 
       {/* Footer Section */}
       <footer className="hq-footer">
-        <p>&copy; 2024 Catholic Defense Hub. Strengthening faith through understanding.</p>
+        <p>&copy; {new Date().getFullYear()} Catholic Defense Hub. Equipping Catholics to share and defend their faith.</p>
       </footer>
     </div>
   );
