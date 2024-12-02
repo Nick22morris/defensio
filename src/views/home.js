@@ -13,7 +13,7 @@ const Home = () => {
         <div className="hq-header-content">
           <h1 className="hq-header-title">Catholic Defense Hub</h1>
           <p className="hq-header-subtitle">
-            Your frontline resource for defending Catholicism. Engage, educate, and stand firm.
+            Your frontline resource for defending the <i>One True Faith</i>.
           </p>
         </div>
       </header>
@@ -25,7 +25,7 @@ const Home = () => {
           <img src="/logo2.png" alt="Defensio Logo" className="hq-sidebar-logo" />
           <h2 className="hq-sidebar-title">About Catholic Defense Hub</h2>
           <p className="hq-sidebar-text">
-            Navigate Catholic objections and find structured responses. Whether you’re a seasoned apologist or a curious learner, Standoff HQ equips you with the tools to engage meaningfully.
+            Easily access clear, concise answers to common objections against Catholicism. Designed for evangelization, personal study, or apologetic discussions, Catholic Defense Hub equips you with quick references to Scripture, Church teachings, and logical arguments. Whether you’re engaging in friendly dialogue or deepening your understanding, this tool keeps the truth at your fingertips.
           </p>
         </aside>
 
