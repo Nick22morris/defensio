@@ -22,9 +22,26 @@ CORS(app, resources={
     r"/*": {"origins": [
         "https://defensio-46cf4.web.app",
         "http://localhost:3000",
-        "https://flask-backend-572297073167.us-south1.run.app"
+        "https://flask-backend-572297073167.us-south1.run.app",
+        "https://catholicdefensehub.com/"
     ]}
 }, supports_credentials=True)
+
+
+@app.after_request
+def add_cors_headers(response):
+    origin = request.headers.get('Origin')
+    if origin in [
+        "https://defensio-46cf4.web.app",
+        "http://localhost:3000",
+        "https://flask-backend-572297073167.us-south1.run.app",
+        "https://catholicdefensehub.com"
+    ]:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Credentials"] = "true"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
 
 
 @app.route('/session-login', methods=['POST'])

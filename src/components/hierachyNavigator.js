@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import CellComponent from './cell';
 import '../App.css';
 import '../css/hierarchy-navigator.css';
@@ -7,75 +6,96 @@ import '../css/hierarchy-navigator.css';
 const fetchNode = async (id) => {
   const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/node/${id}`);
   if (!response.ok) {
-    throw new Error('Network response was not ok');
+    throw new Error('Failed to fetch node');
   }
   return response.json();
 };
 
-const HierarchyNavigator = ({ onNodeChange }) => {
-  const [currentNodeId, setCurrentNodeId] = useState('root');
-  const [history, setHistory] = useState([]);
-  const [selectedNode, setSelectedNode] = useState(null); // Track the selected node
-  const channel = new BroadcastChannel('node-updates');
+// Initialize a global BroadcastChannel
+const channel = new BroadcastChannel('node-updates');
 
-  const { data: currentNode, error, isLoading } = useQuery({
-    queryKey: ['node', currentNodeId],
-    queryFn: () => fetchNode(currentNodeId),
-  });
+const HierarchyNavigator = ({ onNodeChange }) => {
+  const [currentNode, setCurrentNode] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [selectedNode, setSelectedNode] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (currentNode) {
-      onNodeChange(currentNode); // Notify parent component about the current node
-      sendNodeToViewer(currentNode); // Send current node to the display view
+    // Fetch the root node from the backend on initial render
+    const fetchRootNode = async () => {
+      try {
+        const rootNode = await fetchNode('root'); // Assuming 'root' is the ID for the root node
+        setCurrentNode(rootNode);
+        onNodeChange(rootNode);
+        sendNodeToViewer(rootNode);
+        setIsLoading(false);
+      } catch (err) {
+        console.error(err.message);
+        setError(err.message);
+        setIsLoading(false);
+      }
+    };
+
+    fetchRootNode();
+  }, [onNodeChange]);
+
+  const sendNodeToViewer = (node) => {
+    if (node) {
+      try {
+        channel.postMessage({ type: 'update', node });
+      } catch (error) {
+        console.error('Failed to send node update:', error.message);
+      }
     }
-  }, [currentNode, onNodeChange]);
+  };
 
   const handleCellClick = (childNode) => {
     if (selectedNode === childNode.id) {
-      // If the clicked node is already selected, unselect it
+      // Deselect the currently selected node
       setSelectedNode(null);
-      onNodeChange(currentNode); // Reset notes to the current parent node
-      sendNodeToViewer(currentNode); // Reset display view to the parent node
+      onNodeChange(currentNode);
+      sendNodeToViewer(currentNode);
     } else if (childNode.children?.length > 0) {
-      // Navigate deeper if the node has children
-      setHistory([...history, currentNodeId]);
-      setCurrentNodeId(childNode.id);
-      setSelectedNode(null); // Clear selection when navigating
-      onNodeChange(childNode); // Update parent with the clicked node
-      sendNodeToViewer(childNode); // Update display view
+      // Navigate deeper into the hierarchy
+      setHistory([...history, currentNode]);
+      setCurrentNode(childNode);
+      setSelectedNode(null); // Clear any selection when navigating
+      onNodeChange(childNode);
+      sendNodeToViewer(childNode);
     } else {
-      // Highlight the node if it has no children
+      // Highlight the clicked node if it has no children
       setSelectedNode(childNode.id);
-      onNodeChange(childNode); // Update parent with the selected node
-      sendNodeToViewer(childNode); // Update display view
+      onNodeChange(childNode);
+      sendNodeToViewer(childNode);
     }
   };
 
   const handleBackClick = () => {
     if (history.length > 0) {
-      const previousNodeId = history[history.length - 1];
-      setCurrentNodeId(previousNodeId);
+      const previousNode = history[history.length - 1];
+      setCurrentNode(previousNode);
       setHistory(history.slice(0, -1));
       setSelectedNode(null); // Clear selection when navigating back
-      onNodeChange(currentNode); // Update parent with the parent node
-      sendNodeToViewer(currentNode); // Update display view
-    }
-  };
-
-  const sendNodeToViewer = (node) => {
-    if (node) {
-      channel.postMessage({ type: 'update', node });
+      onNodeChange(previousNode);
+      sendNodeToViewer(previousNode);
     }
   };
 
   useEffect(() => {
+    // Cleanup should not close the global channel
     return () => {
-      channel.close();
+      // If you need to close this channel, consider managing it separately from the global instance
     };
   }, []);
 
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="navigator-container">
@@ -91,7 +111,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
         <button
           onClick={() => {
             const viewerTab = window.open('/display', '_blank');
-            if (currentNode) sendNodeToViewer(currentNode); // Send current node to the viewer tab
+            if (currentNode) sendNodeToViewer(currentNode);
           }}
           className="viewer-tab-button"
         >
@@ -99,7 +119,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
         </button>
       )}
 
-      {/* Children Display */}
+      {/* Display Current Node's Children */}
       <div className="navigator-content">
         {currentNode?.children?.length > 0 ? (
           <div className="child-list">
@@ -110,7 +130,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
                 notes={childNode.notes || ''}
                 onClick={() => handleCellClick(childNode)}
                 hasChildren={childNode.children && childNode.children.length > 0}
-                isSelected={selectedNode === childNode.id} // Pass selected state
+                isSelected={selectedNode === childNode.id}
               />
             ))}
           </div>
