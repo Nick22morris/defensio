@@ -24,7 +24,7 @@
   font-size: 16px;
   font-weight: bold;
   color: #fff;
-  background-color: #1c2833;
+  background-color: #2c3e50;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -33,7 +33,7 @@
 
 .viewer-tab-button:hover,
 .back-button:hover {
-  background-color: #2c3e50;
+  background-color: #1c2833;
   transform: translateY(-2px);
 }
 .child-list {
