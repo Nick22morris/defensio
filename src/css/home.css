@@ -39,7 +39,7 @@
 /* Main Content */
 .hq-main {
   display: grid;
-  grid-template-columns: 1.5fr 2.5fr 1.5fr; /* Adjusted column proportions */
+  grid-template-columns: 1.25fr 2.25fr 2fr; /* Adjusted column proportions */
   gap: 30px; /* Increased spacing between sections */
   flex-grow: 1;
   padding: 20px;
