@@ -39,8 +39,8 @@
 /* Main Content */
 .hq-main {
   display: grid;
-  grid-template-columns: 1fr 2fr 1.5fr; /* Wider Notes Section */
-  gap: 20px;
+  grid-template-columns: 1.5fr 2.5fr 1.5fr; /* Adjusted column proportions */
+  gap: 30px; /* Increased spacing between sections */
   flex-grow: 1;
   padding: 20px;
   background: #34495e;
@@ -70,26 +70,28 @@
 
 /* Navigator Section */
 .hq-navigator {
-  background: #ffffff;
+  background: #2c3e50; /* Slightly lighter shade of the dark blue */
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+  color: #f9fafb; /* Light text for readability */
   overflow-y: auto;
 }
+
 
 .hq-section-title {
   font-size: 1.8rem;
   margin-bottom: 15px;
-  color: #34495e;
+  color: white;
 }
 
 /* Notes Section */
 .hq-notes {
-  background: #2c3e50;
-  color: #ecf0f1;
+  background: #2c3e50; /* Match the center card background */
+  color: #f9fafb; /* Light text for readability */
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
   transition: all 0.3s ease;
   opacity: 0;
@@ -104,10 +106,23 @@
 .hq-notes-header {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #ecf0f1;
+  color: #ecf0f1; /* Slightly brighter text for headers */
   padding-bottom: 10px;
   margin-bottom: 10px;
-  border-bottom: 2px solid #2980b9;
+  border-bottom: 2px solid #56687a; /* Subtle divider */
+}
+
+.notes-box {
+  padding: 20px;
+  background: #4b5968; /* Slightly darker background for boxes */
+  border-radius: 8px;
+  color: #f9fafb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.notes-content {
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 /* Body Content for Notes */
@@ -136,4 +151,9 @@
   padding: 10px 0;
   font-size: 0.9rem;
   border-top: 3px solid #2980b9;
+}
+.hq-sidebar,
+.hq-navigator,
+.hq-notes {
+  border: 1px solid #dfe6e9;
 }

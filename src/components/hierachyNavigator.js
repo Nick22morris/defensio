@@ -102,15 +102,15 @@ const HierarchyNavigator = ({ onNodeChange }) => {
       {/* Back Button */}
       {history.length > 0 && (
         <button onClick={handleBackClick} className="back-button">
-          Back
+          ← Back
         </button>
       )}
 
-      {/* Open Viewer Tab Button: Only visible at root */}
+      {/* Launch Street Mode Button */}
       {history.length === 0 && (
         <button
           onClick={() => {
-            const viewerTab = window.open('/display', '_blank');
+            window.open('/display', '_blank');
             if (currentNode) sendNodeToViewer(currentNode);
           }}
           className="viewer-tab-button"
@@ -119,7 +119,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
         </button>
       )}
 
-      {/* Display Current Node's Children */}
+      {/* Node List or Single View */}
       <div className="navigator-content">
         {currentNode?.children?.length > 0 ? (
           <div className="child-list">
@@ -137,6 +137,11 @@ const HierarchyNavigator = ({ onNodeChange }) => {
         ) : (
           <div className="expanded-single-view">
             <h3 className="expanded-title">{currentNode.title}</h3>
+            {currentNode.notes && (
+              <div className="notes-box">
+                <p className="notes-content">{currentNode.notes}</p>
+              </div>
+            )}
           </div>
         )}
       </div>
