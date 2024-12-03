@@ -28,13 +28,12 @@
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .viewer-tab-button:hover,
 .back-button:hover {
   background-color: #1c2833;
-  transform: translateY(-2px);
 }
 .child-list {
   display: flex;
