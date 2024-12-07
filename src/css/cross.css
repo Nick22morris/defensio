@@ -1,0 +1,76 @@
+
+.hq-notes.no-notes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: #2c3e50; /* Subtle gradient */ /* Initial gradient */
+  background-size: 200% 200%; /* Makes the gradient smoother during the transition */
+  animation: gradient-shift 15s ease infinite; /* Smooth infinite gradient animation */
+  border: 1px solid #445e78;
+  border-radius: 12px;
+  padding: 20px;
+  height: 100%; /* Fill available space */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glowing Cross Wrapper */
+.hq-glowing-cross {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px; /* Adjust size as needed */
+  height: 150px;
+  margin: 0 auto;
+  animation: cross-scale 7s infinite ease-in-out;
+}
+
+/* Glowing Cross Image */
+.hq-glowing-image {
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0 15px #2980b9) drop-shadow(0 0 30px #3498db); /* Base glow effect */
+  animation: glow-intensity 2s infinite alternate ease-in-out;
+}
+
+/* Keyframes for Cross Scaling */
+@keyframes cross-scale {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Keyframes for Glow Intensity */
+@keyframes glow-intensity {
+  from {
+    filter: drop-shadow(0 0 10px #3498db) drop-shadow(0 0 20px #154276);
+  }
+  to {
+    filter: drop-shadow(0 0 25px #216c91) drop-shadow(0 0 50px #185885);
+  }
+}
+
+/* Rotating Quotes */
+.hq-no-notes-text {
+  font-size: 1.2rem;
+  color: #f9fafb;
+  margin-top: 20px;
+  position: relative;
+  animation: fade-in-out 10s infinite;
+  text-align: center;
+}
+
+@keyframes fade-in-out {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  10%, 90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

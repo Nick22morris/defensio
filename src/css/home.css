@@ -6,6 +6,8 @@
   font-family: 'Roboto', sans-serif;
   background: linear-gradient(to bottom, #1c2833, #2c3e50);
   color: #f9fafb;
+  margin: 0 auto; /* Center the container */
+  max-width: 100%; /* Allow full width */
 }
 
 /* Header */
@@ -39,13 +41,40 @@
 /* Main Content */
 .hq-main {
   display: grid;
-  grid-template-columns: 1.25fr 2.25fr 2fr; /* Adjusted column proportions */
-  gap: 30px; /* Increased spacing between sections */
+  grid-template-columns: 20vw 36vw 36vw; /* Adjusted for better balance */
+  width: 100vw; /* Constrain the layout width */
+  gap: 2vw;
   flex-grow: 1;
-  padding: 20px;
+  padding: 2vw;
   background: #34495e;
+  transition: grid-template-columns 1s ease; /* Smooth resizing */
+  margin: 0 auto; /* Center the main grid */
 }
 
+.hq-main.collapsed-sidebar {
+  grid-template-columns: 0vw 40vw 50vw; /* Evenly distribute space when collapsed */
+}
+
+.hq-navigator, .hq-notes {
+  transition: width 1s ease;
+}
+
+/* Sidebar Collapse Button */
+.hq-toggle-sidebar {
+  background: #445e78;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px;
+  margin: 10px;
+  cursor: pointer;
+  z-index: 10;
+  transition: all 1s ease;
+}
+
+.hq-toggle-sidebar:hover {
+  background: #1c2833;
+}
 /* Sidebar */
 .hq-sidebar {
   background: #2c3e50;
@@ -55,6 +84,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform: translateX(0); /* Fully visible by default */
+  opacity: 1;
+}
+
+.hq-sidebar.hidden {
+  transform: translateX(-100%);
+  opacity: 0;
+  transition: transform 1s ease, opacit 1s ease;
+  height: 10%; /* Maintain consistent height when hidden */
 }
 
 .hq-sidebar-logo {
@@ -93,11 +132,7 @@
   padding: 25px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
-  transition: all 0.3s ease;
-  opacity: 0;
-  transform: translateY(20px);
 }
-
 .hq-notes.visible {
   opacity: 1;
   transform: translateY(0);
@@ -124,7 +159,6 @@
   font-size: 1rem;
   line-height: 1.6;
 }
-
 /* Body Content for Notes */
 .hq-body-content {
   font-size: 1rem;
@@ -155,5 +189,5 @@
 .hq-sidebar,
 .hq-navigator,
 .hq-notes {
-  border: 1px solid #dfe6e9;
+  border: 1px solid #445e78;
 }

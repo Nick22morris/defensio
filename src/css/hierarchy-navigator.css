@@ -91,3 +91,48 @@
   color: #555;
   line-height: 1.6;
 }
+/* Spinner Container */
+.hq-loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: first baseline;
+  margin-top: 10vh;
+  height: 100%; /* Ensures it fills the parent */
+  text-align: center;
+}
+
+/* Rotating Icon */
+.hq-loading-icon {
+  width: 80px;
+  height: auto;
+  animation: spin 2s linear infinite; /* Smooth rotation */
+  filter: drop-shadow(0 0 10px #2980b9);
+}
+
+/* Glowing Animation for Icon */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Loading Text */
+.hq-loading-text {
+  font-size: 1.2rem;
+  margin-top: 15px;
+  color: #ecf0f1;
+  animation: fade-in-out 3s infinite; /* Subtle blinking effect */
+}
+
+@keyframes fade-in-out {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}

@@ -22,22 +22,33 @@ const HierarchyNavigator = ({ onNodeChange }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch the root node from the backend on initial render
+    let isMounted = true; // To prevent state updates if the component unmounts
+
     const fetchRootNode = async () => {
       try {
         const rootNode = await fetchNode('root'); // Assuming 'root' is the ID for the root node
-        setCurrentNode(rootNode);
-        onNodeChange(rootNode);
-        sendNodeToViewer(rootNode);
-        setIsLoading(false);
+        if (isMounted) {
+          setCurrentNode(rootNode);
+          setIsLoading(false);
+
+          // Only call `onNodeChange` and `sendNodeToViewer` after state is updated
+          onNodeChange(rootNode);
+          channel.postMessage({ type: 'update', node: rootNode });
+        }
       } catch (err) {
         console.error(err.message);
-        setError(err.message);
-        setIsLoading(false);
+        if (isMounted) {
+          setError(err.message);
+          setIsLoading(false);
+        }
       }
     };
 
     fetchRootNode();
+
+    return () => {
+      isMounted = false; // Clean up on unmount
+    };
   }, [onNodeChange]);
 
   const sendNodeToViewer = (node) => {
@@ -90,7 +101,12 @@ const HierarchyNavigator = ({ onNodeChange }) => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="hq-loading-spinner">
+        <img src="/logo2.png" alt="Loading Icon" className="hq-loading-icon" />
+        <p className="hq-loading-text">Fetching Topics...</p>
+      </div>
+    )
   }
 
   if (error) {
