@@ -55,7 +55,6 @@
 
 .child-list .cell:hover {
   background: #56687a; /* Slightly brighter blue on hover */
-  transform: translateY(-3px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
