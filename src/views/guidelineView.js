@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import '../css/viewer.css';
 import { useNavigate } from 'react-router-dom';
+import { getAuth, signOut } from 'firebase/auth'; // Import Firebase auth functions
 const GuidelineViewer = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-
+    const auth = getAuth(); // Initialize Firebase Auth
     const toggleModal = () => {
         setIsOpen(!isOpen);
     };
@@ -14,6 +15,18 @@ const GuidelineViewer = () => {
             setIsOpen(false); // Close the modal
         }
     };
+
+    const handleLogout = () => {
+        signOut(auth)
+            .then(() => {
+                console.log('User signed out');
+                navigate('/login'); // Redirect to login page
+            })
+            .catch((error) => {
+                console.error('Error signing out:', error);
+            });
+    };
+
     return (
         <div>
             {/* Button to Open the Overlay */}
@@ -22,6 +35,9 @@ const GuidelineViewer = () => {
             </button>
             <button onClick={toggleModal} className="guideline-button">
                 View User Manual
+            </button>
+            <button className="guideline-button" onClick={handleLogout}>
+                Logout
             </button>
 
             {/* Modal Overlay */}
