@@ -1,72 +1,44 @@
 from google.cloud import firestore
 
-# Initialize Firestore
+# Initialize Firestore client
 db = firestore.Client()
 
-# Define the root node and hierarchy as nested dictionaries
-root_node = {
-    "id": "root",
-    "title": "Main Category",
-    "body": "This is the root node",
-    "notes": "Root node for the hierarchy",
-    "parent_id": None,
-    "children": ["1", "4"]  # List of child node IDs
-}
 
-child_nodes = [
-    {
-        "id": "1",
-        "title": "Protestants",
-        "body": "Discussing Protestant topics",
-        "notes": "Group discussing Protestant topics",
-        "parent_id": "root",
-        "children": ["2", "3"]
-    },
-    {
-        "id": "2",
-        "title": "Worship Mary",
-        "body": "",
-        "notes": "Discussion on veneration of Mary",
-        "parent_id": "1",
-        "children": []
-    },
-    {
-        "id": "3",
-        "title": "Pope",
-        "body": "",
-        "notes": "Matthew 16:16 - Pope's significance",
-        "parent_id": "1",
-        "children": []
-    },
-    {
-        "id": "4",
-        "title": "Does God Exist?",
-        "body": "",
-        "notes": "Philosophical arguments on God's existence",
-        "parent_id": "root",
-        "children": []
-    }
-]
+def update_children_references():
+    nodes_ref = db.collection("nodes")
+    nodes = nodes_ref.stream()
 
+    # Create a dictionary to hold all nodes by their IDs
+    node_dict = {}
+    for node in nodes:
+        node_dict[node.id] = node.to_dict()
 
-def upload_node(node_data):
-    """Uploads a single node to Firestore."""
-    node_ref = db.collection('nodes').document(node_data['id'])
-    node_ref.set(node_data)
-    print(f"Node '{node_data['title']}' with ID '{node_data['id']}' uploaded.")
+    # Iterate through all nodes to update parents
+    for node_id, node_data in node_dict.items():
+        parent_id = node_data.get("parent_id")
+        if parent_id:
+            # Get the parent's data
+            parent_data = node_dict.get(parent_id)
+            if parent_data:
+                # Ensure the parent has a 'children_order' field
+                if "children_order" not in parent_data:
+                    parent_data["children_order"] = []
 
+                # If this child is not in the parent's children_order, add it
+                if node_id not in parent_data["children_order"]:
+                    parent_data["children_order"].append(node_id)
 
-def upload_root_hierarchy():
-    """Uploads the root node and all its child nodes to Firestore."""
-    # Upload the root node
-    upload_node(root_node)
-
-    # Upload each child node
-    for child_node in child_nodes:
-        upload_node(child_node)
-
-    print("Root node and hierarchy uploaded successfully.")
+                # Update the parent's children_order in Firestore
+                parent_ref = nodes_ref.document(parent_id)
+                parent_ref.update(
+                    {"children_order": parent_data["children_order"]})
+                print(f"Updated parent {parent_id} with child {node_id}")
+            else:
+                print(
+                    f"Parent {parent_id} for child {node_id} does not exist in the database.")
+        else:
+            print(f"Node {node_id} has no parent.")
 
 
 if __name__ == "__main__":
-    upload_root_hierarchy()
+    update_children_references()

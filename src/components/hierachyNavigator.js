@@ -129,7 +129,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
             window.open('/display', '_blank');
             if (currentNode) sendNodeToViewer(currentNode);
           }}
-          className="viewer-tab-button"
+          className="back-button"
         >
           Launch Street Mode
         </button>

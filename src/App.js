@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./views/home";
 import Login from "./views/Login";
 import ChangePassword from "./views/ChangePasswordView";
@@ -9,7 +9,7 @@ import DisplayView from "./views/displayView";
 import PageNotFound from "./views/404";
 import MobileWarningScreen from "./views/MobileView";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { getAuth, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 const queryClient = new QueryClient();
 

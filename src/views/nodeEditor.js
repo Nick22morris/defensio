@@ -4,6 +4,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useNavigate } from 'react-router-dom';
 import GuidelineViewer from './guidelineView';
 import axios from 'axios';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 const fetchNode = async (id) => {
   const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/node/${id}`);
@@ -88,6 +89,32 @@ const NodeEditor = () => {
     };
   }, [selectedNode, title, body, notes]);
 
+  const handleDragEnd = async (result) => {
+    if (!result.destination) return;
+
+    const reorderedChildren = Array.from(selectedNode.children);
+    const [movedItem] = reorderedChildren.splice(result.source.index, 1);
+    reorderedChildren.splice(result.destination.index, 0, movedItem);
+
+
+    const newOrder = reorderedChildren.map((child) => child.id);
+
+    try {
+      // Update the order on the server
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/node/${selectedNode.id}/update-order`, {
+        order: newOrder,
+      });
+
+      // Update the local state
+      setSelectedNode((prev) => ({
+        ...prev,
+        children: reorderedChildren,
+      }));
+    } catch (error) {
+      console.error("Failed to update child order:", error);
+    }
+  };
+
   const handleSelectNode = (node) => {
     setSelectedNode(node);
     setTitle(node.title);
@@ -96,21 +123,21 @@ const NodeEditor = () => {
   };
 
   const handleSave = async () => {
-    if (!selectedNode) return; // Do nothing if no node is selected
+    if (!selectedNode) return;
 
-    const updates = { title, body, notes };
+    const updates = { title, body, notes, children: selectedNode.children };
 
     try {
-      // Save updates to the selected node
+      // Save updates to the selected node, including the new order of children
       await updateNodeProperty(selectedNode.id, updates);
 
       // Fetch the updated hierarchy from the server
       const updatedRootNode = await fetchNode("root");
 
-      // Update the root node
+      // Update the root node state
       setRootNode(updatedRootNode);
 
-      // Find the updated version of the selected node
+      // Find and set the updated selected node
       const findUpdatedNode = (node, id) => {
         if (node.id === id) return node;
         if (node.children) {
@@ -123,14 +150,7 @@ const NodeEditor = () => {
       };
 
       const newSelectedNode = findUpdatedNode(updatedRootNode, selectedNode.id);
-
-      // Update the selected node if it exists in the updated tree
-      if (newSelectedNode) {
-        setSelectedNode(newSelectedNode);
-      } else {
-        console.warn("Selected node not found in updated hierarchy. Defaulting to root.");
-        setSelectedNode(updatedRootNode); // Fallback to root
-      }
+      setSelectedNode(newSelectedNode || updatedRootNode);
     } catch (error) {
       console.error("Failed to save changes:", error);
     }
@@ -281,19 +301,43 @@ const NodeEditor = () => {
               <button className="icon-button add" onClick={handleAddChild}>
                 Add Child
               </button>
-              <ul>
-                {selectedNode.children?.map((child) => (
-                  <li key={child.id} className="child-item">
-                    {child.title}
-                    <button
-                      className="icon-button delete"
-                      onClick={() => handleRemoveChild(child.id)}
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="child-list">
+                  {(provided) => (
+                    <ul
+                      ref={provided.innerRef}
+                      {...provided.droppableProps}
+                      className="child-list"
                     >
-                      Remove
-                    </button>
-                  </li>
-                ))}
-              </ul>
+                      {selectedNode?.children?.map((child, index) => (
+                        <Draggable
+                          key={child.id.toString()}
+                          draggableId={child.id.toString()}
+                          index={index}
+                        >
+                          {(provided) => (
+                            <li
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                              className="child-item"
+                            >
+                              {child.title}
+                              <button
+                                className="icon-button delete"
+                                onClick={() => handleRemoveChild(child.id)}
+                              >
+                                Remove
+                              </button>
+                            </li>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </ul>
+                  )}
+                </Droppable>
+              </DragDropContext>
             </div>
           ) : (
             <div className="empty-editor">

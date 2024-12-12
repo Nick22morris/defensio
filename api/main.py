@@ -68,13 +68,22 @@ db = firestore.Client()
 def fetch_children(node_id):
     """Fetch child nodes recursively by parent node's ID and build the hierarchy."""
     children = []
-    children_docs = db.collection('nodes').where(
-        'parent_id', '==', node_id).stream()
-    for doc in children_docs:
-        child_data = doc.to_dict()
-        # Recursively fetch children for each child node
-        child_data['children'] = fetch_children(child_data['id'])
-        children.append(child_data)
+    parent_doc = db.collection('nodes').document(node_id).get()
+
+    if not parent_doc.exists:
+        return []
+
+    parent_data = parent_doc.to_dict()
+    children_order = parent_data.get('children_order', [])
+
+    for child_id in children_order:
+        child_doc = db.collection('nodes').document(child_id).get()
+        if child_doc.exists:
+            child_data = child_doc.to_dict()
+            # Recursively fetch children for each child node
+            child_data['children'] = fetch_children(child_data['id'])
+            children.append(child_data)
+
     return children
 
 # Fetch the root node with its full hierarchy of children
@@ -143,17 +152,35 @@ def handle_node(id):
 def add_child(id):
     data = request.json
     new_child_id = db.collection('nodes').document().id
+
+    # Determine the order for the new child (e.g., append to the end of the list)
+    parent_ref = db.collection('nodes').document(id)
+    parent_doc = parent_ref.get()
+    if parent_doc.exists:
+        parent_data = parent_doc.to_dict()
+        current_children = parent_data.get("children", [])
+        order = len(current_children)
+    else:
+        order = 0
+
     new_child_data = {
         "id": new_child_id,
         "title": data.get('title', 'New Child'),
         "body": data.get('body', ''),
         "notes": data.get('notes', ''),
         "parent_id": id,
+        "order": order,  # Store the order
         "children": []  # Initialize with an empty children list
     }
 
-    # Store the new child node independently in Firestore
+    # Add the new child node to Firestore
     db.collection('nodes').document(new_child_id).set(new_child_data)
+
+    # Update the parent's children array
+    parent_ref.update({
+        "children": firestore.ArrayUnion([new_child_id]),
+        "children_order": firestore.ArrayUnion([new_child_id])
+    })
 
     return jsonify(new_child_data), 200
 
@@ -177,7 +204,10 @@ def remove_child(id):
     try:
         # Remove child ID from parent node's children list
         parent_ref = db.collection('nodes').document(id)
-        parent_ref.update({"children": firestore.ArrayRemove([child_id])})
+        parent_ref.update({
+            "children": firestore.ArrayRemove([child_id]),
+            "children_order": firestore.ArrayRemove([child_id])
+        })
 
         # Delete the child node document from Firestore
         child_ref.delete()
@@ -186,6 +216,22 @@ def remove_child(id):
     except Exception as e:
         print(f"Error removing child: {e}")
         return jsonify({"error": "Failed to remove child"}), 500
+
+
+@app.route('/node/<id>/update-order', methods=['POST'])
+def update_child_order(id):
+    try:
+        data = request.json
+        new_order = data.get('order', [])
+
+        # Update the children order in Firestore
+        node_ref = db.collection('nodes').document(id)
+        node_ref.update({"children_order": new_order})
+
+        return jsonify({"message": "Child order updated"}), 200
+    except Exception as e:
+        print(f"Error updating child order: {e}")
+        return jsonify({"error": "Failed to update child order"}), 500
 
 
 @app.route('/test-cors', methods=['GET'])

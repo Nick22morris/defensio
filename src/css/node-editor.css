@@ -198,32 +198,45 @@ html, body {
 }
 
 .icon-button.delete {
-  background-color: #dc3545;
-}
-
-.icon-button:hover {
-  transform: translateY(-2px);
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .icon-button.delete:hover {
-  background-color: #c82333;
+  background: #c82333;
 }
 
 /* Children list styling */
+.child-list {
+  padding: 0;
+  list-style: none;
+  margin-top: 10px;
+}
 .child-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-  border-radius: 6px;
-  background-color: #f9fafb;
   margin-bottom: 8px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: grab;
   transition: background-color 0.2s ease;
 }
 
 .child-item:hover {
   background-color: #f0f8ff;
 }
+
+.child-item:active {
+  cursor: grabbing;
+}
+
 
 /* Empty editor message styling */
 .empty-editor {
