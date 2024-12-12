@@ -49,9 +49,7 @@ const App = () => {
                 </PrivateRoute>
               }
             />
-            <Route path="/change-password" element={<PrivateRoute>
-              <ChangePassword />
-            </PrivateRoute>} />
+            <Route path="/change-password" element={<ChangePassword />} />
           </Routes>
         </div>
       </Router>
