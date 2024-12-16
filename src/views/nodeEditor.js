@@ -45,7 +45,13 @@ const removeChildNode = async (parentId, childId) => {
     throw new Error('Failed to remove child node');
   }
 };
-
+const SaveMessage = () => {
+  return (
+    <div className="save-message">
+      <p>Content Saved</p>
+    </div>
+  );
+};
 const NodeEditor = () => {
   const navigate = useNavigate();
   const [rootNode, setRootNode] = useState(null);
@@ -53,6 +59,8 @@ const NodeEditor = () => {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [notes, setNotes] = useState('');
+
+  const [showSaveMessage, setShowSaveMessage] = useState(false);
 
   // State for resizable panels
   const [treeWidth, setTreeWidth] = useState(550); // Initial width of hierarchy tree
@@ -131,6 +139,7 @@ const NodeEditor = () => {
       // Save updates to the selected node, including the new order of children
       await updateNodeProperty(selectedNode.id, updates);
 
+
       // Fetch the updated hierarchy from the server
       const updatedRootNode = await fetchNode("root");
 
@@ -151,6 +160,13 @@ const NodeEditor = () => {
 
       const newSelectedNode = findUpdatedNode(updatedRootNode, selectedNode.id);
       setSelectedNode(newSelectedNode || updatedRootNode);
+      // Display the save message
+      setShowSaveMessage(true);
+
+      // Hide the message after 3 seconds
+      setTimeout(() => {
+        setShowSaveMessage(false);
+      }, 3000);
     } catch (error) {
       console.error("Failed to save changes:", error);
     }
@@ -346,6 +362,9 @@ const NodeEditor = () => {
           )}
         </div>
       </div>
+
+      {/* Save confirmation message */}
+      {showSaveMessage && <SaveMessage />}
     </div>
   );
 };

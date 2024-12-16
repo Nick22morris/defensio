@@ -14,9 +14,9 @@ html, body {
   justify-content: flex-start;
   align-items: center;
   padding: 10px 20px;
-  background-color: #007bff;
+  background: linear-gradient(to right, #2c3e50, #1c2833);
   /* Matches button color */
-  border-bottom: 1px solid #d1d9e6;
+  border-bottom: 3px solid #2980b9;
   width: 100%;
   box-sizing: border-box;
   /* Rounded top corners */
@@ -26,8 +26,8 @@ html, body {
 .top-header .modal-button {
   padding: 5px 100px;
   font-size: 14px;
-  background-color: white;
-  color: #007bff;
+  background: #445e78;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -104,7 +104,7 @@ html, body {
 }
 
 .hierarchy-item.selected {
-  background-color: #007bff;
+  background-color: #445e78;
   color: white;
 }
 
@@ -253,4 +253,17 @@ html, body {
   width: 10px;
   cursor: col-resize;
   z-index: 1;
+}
+/* SaveMessage.css */
+.save-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #34495e;
+  color: white;
+  font-size: 1.5rem;
+  padding: 10px;
+  border-radius: 10px;
+  z-index: 9999; /* Ensures it appears above other content */
 }
