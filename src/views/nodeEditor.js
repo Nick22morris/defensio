@@ -52,6 +52,14 @@ const SaveMessage = () => {
     </div>
   );
 };
+const LoadingMessage = () => {
+  return (
+    <div className="loading-box">
+      <img src="/logo.png" alt="Loading Icon" className="loading-icon" />
+      <p className="loading-text">Saving</p>
+    </div>
+  )
+}
 const NodeEditor = () => {
   const navigate = useNavigate();
   const [rootNode, setRootNode] = useState(null);
@@ -61,6 +69,7 @@ const NodeEditor = () => {
   const [notes, setNotes] = useState('');
 
   const [showSaveMessage, setShowSaveMessage] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   // State for resizable panels
   const [treeWidth, setTreeWidth] = useState(550); // Initial width of hierarchy tree
@@ -136,6 +145,7 @@ const NodeEditor = () => {
     const updates = { title, body, notes, children: selectedNode.children };
 
     try {
+      setLoading(true);
       // Save updates to the selected node, including the new order of children
       await updateNodeProperty(selectedNode.id, updates);
 
@@ -161,6 +171,7 @@ const NodeEditor = () => {
       const newSelectedNode = findUpdatedNode(updatedRootNode, selectedNode.id);
       setSelectedNode(newSelectedNode || updatedRootNode);
       // Display the save message
+      setLoading(false);
       setShowSaveMessage(true);
 
       // Hide the message after 3 seconds
@@ -365,6 +376,7 @@ const NodeEditor = () => {
 
       {/* Save confirmation message */}
       {showSaveMessage && <SaveMessage />}
+      {isLoading && <LoadingMessage />}
     </div>
   );
 };
