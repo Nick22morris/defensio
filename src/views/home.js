@@ -24,7 +24,6 @@ const Home = () => {
       {/* Main Content Section */}
       <main className={`hq-main ${isSidebarVisible ? '' : 'collapsed-sidebar'}`}>
         <aside className={`hq-sidebar ${isSidebarVisible ? '' : 'hidden'}`}>
-          <img src="/logo2.png" alt="Defensio Logo" className="hq-sidebar-logo" />
           <h2 className="hq-sidebar-title">About Catholic Defense Hub</h2>
           {isSidebarVisible && (
             <p className="hq-sidebar-text">
@@ -58,7 +57,7 @@ const Home = () => {
 
       {/* Footer Section */}
       <footer className="hq-footer">
-        <p>&copy; {new Date().getFullYear()} Catholic Defense Hub. Equipping Catholics to share and defend their faith.</p>
+        <p>&copy; {new Date().getFullYear()} Catholic Defense Hub. <i>Blessed Carlo Acutis pray for us.</i></p>
       </footer>
     </div>
   );
