@@ -52,11 +52,11 @@ const SaveMessage = () => {
     </div>
   );
 };
-const LoadingMessage = () => {
+const LoadingMessage = ({ message }) => {
   return (
     <div className="loading-box">
       <img src="/logo.png" alt="Loading Icon" className="loading-icon" />
-      <p className="loading-text">Saving</p>
+      <p className="loading-text">{message}</p>
     </div>
   )
 }
@@ -253,7 +253,7 @@ const NodeEditor = () => {
     </div>
   );
 
-  if (!rootNode) return <div>Loading hierarchy...</div>;
+  if (!rootNode) return <LoadingMessage message="Loading..." />;
 
   return (
     <div className="node-editor-container">
@@ -294,7 +294,7 @@ const NodeEditor = () => {
                 />
               </label>
               <label>
-                Body:
+                Display:
                 <Editor
                   apiKey="jyoilj77xozk21jg7wxt1k5t9a0u7nisp896b6lmsyhd826j"
                   value={body}
@@ -376,7 +376,7 @@ const NodeEditor = () => {
 
       {/* Save confirmation message */}
       {showSaveMessage && <SaveMessage />}
-      {isLoading && <LoadingMessage />}
+      {isLoading && <LoadingMessage message="Saving..." />}
     </div>
   );
 };
