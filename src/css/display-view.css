@@ -44,8 +44,8 @@
   /* Slide Body Styling */
 /* Slide Body Styling */
 .slide-body {
-  font-size: 1.7em; /* Slightly larger font size for readability */
-  line-height: 1.5; /* Adjusted for better spacing between lines */
+  font-size: 1.8em; /* Slightly larger font size for readability */
+  line-height: 1.2; /* Adjusted for better spacing between lines */
   text-align: left; /* Keep text left-aligned */
   color: #ecf0f1;
   margin-top: 20px;
@@ -97,7 +97,7 @@
     margin: 0; /* Remove default margins */
     padding: 0 1px; /* Add controlled padding for indentation */
     list-style-position: inside; /* Ensure the list numbers/bullets align with the text */
-    line-height: 1; /* Improve readability with proper spacing */
+    line-height: 0.9; /* Improve readability with proper spacing */
     color: #ecf0f1; /* Ensure consistent color */
     font-size: clamp(0.4em, 78%, 1.4em); 
 }
