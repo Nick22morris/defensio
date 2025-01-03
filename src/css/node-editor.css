@@ -43,15 +43,16 @@ html, body {
 
 /* Main content layout */
 .main-content {
-  flex: 1;
   display: flex;
   width: 100%;
-  height: calc(100% - 60px); /* Adjust based on header height */
+  height: calc(100% - 60px);  /* Adjust for header height */
   gap: 20px;
   padding: 10px;
   background-color: #f9fafb;
   box-sizing: border-box;
+  overflow: hidden; /* Prevent layout overflow */
 }
+
 /* Ensure the NodeEditor takes up the full viewport */
 .node-editor-container {
   flex: 1;
@@ -64,16 +65,14 @@ html, body {
 
 /* Hierarchy tree layout */
 .hierarchy-tree {
-  flex: 0 0 auto;
-  height: 100%;
-  max-height: 100%;
-  overflow-y: auto;
+  overflow-y: auto; /* Allow scrolling when content overflows */
   border: 1px solid #d1d9e6;
   padding: 20px;
   border-radius: 8px;
   background-color: white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
+  height: 88vh; /* Match the editor wrapper height */
 }
 
 .hierarchy-tree h3 {
@@ -117,12 +116,15 @@ html, body {
 /* Editor wrapper */
 .editor-wrapper {
   flex: 1;
-  height: 100%;
-  max-height: 100%;
-  overflow: hidden;
-  /* Prevents overflow issues */
   display: flex;
   flex-direction: column;
+  overflow-y: auto; /* Allow vertical scrolling within the editor if needed */
+  border: 1px solid #d1d9e6;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  height: 88vh; /* Ensure the editor takes up the full height */
+  max-height: 100%;
 }
 
 /* Editor panel styling */
@@ -237,7 +239,6 @@ html, body {
   cursor: grabbing;
 }
 
-
 /* Empty editor message styling */
 .empty-editor {
   padding: 20px;
@@ -248,12 +249,14 @@ html, body {
   border-radius: 8px;
   border: 1px dashed #d1d9e6;
 }
+
 .resizer {
   background-color: #ddd;
   width: 10px;
   cursor: col-resize;
   z-index: 1;
 }
+
 /* SaveMessage.css */
 .save-message {
   position: fixed;
@@ -267,6 +270,7 @@ html, body {
   border-radius: 10px;
   z-index: 9999; /* Ensures it appears above other content */
 }
+
 /* Spinner Container */
 .loading-box {
   position: fixed;

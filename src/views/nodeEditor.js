@@ -137,6 +137,11 @@ const NodeEditor = () => {
     setTitle(node.title);
     setBody(node.body || '');
     setNotes(node.notes || '');
+
+    const nodeElement = document.getElementById(`node-${node.id}`);
+    if (nodeElement) {
+      nodeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const handleSave = async () => {
@@ -238,7 +243,11 @@ const NodeEditor = () => {
   }, [isResizing]);
 
   const renderHierarchy = (node, level = 0) => (
-    <div className="tree-node" key={node.id} style={{ paddingLeft: `${level * 20}px` }}>
+    <div
+      id={`node-${node.id}`} // Assign an ID to each node for reference
+      className="tree-node"
+      key={node.id}
+      style={{ paddingLeft: `${level * 20}px` }}>
       <div
         className={`hierarchy-item ${selectedNode?.id === node.id ? 'selected' : ''}`}
         onClick={() => handleSelectNode(node)}

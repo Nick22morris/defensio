@@ -9,7 +9,6 @@
     display: flex;
     flex-direction: row;
     gap: 20px;
-    margin-top: 30px;
   }
   
   .viewer-tab-button {
