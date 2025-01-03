@@ -66,7 +66,7 @@ db = firestore.Client()
 
 
 def fetch_children(node_id):
-    """Fetch child nodes recursively by parent node's ID and build the hierarchy."""
+    """Fetch all child nodes recursively by parent node's ID and build the hierarchy."""
     children = []
     parent_doc = db.collection('nodes').document(node_id).get()
 
@@ -80,11 +80,11 @@ def fetch_children(node_id):
         child_doc = db.collection('nodes').document(child_id).get()
         if child_doc.exists:
             child_data = child_doc.to_dict()
-            # Recursively fetch children for each child node
             child_data['children'] = fetch_children(child_data['id'])
             children.append(child_data)
 
     return children
+
 
 # Fetch the root node with its full hierarchy of children
 
@@ -232,6 +232,18 @@ def update_child_order(id):
     except Exception as e:
         print(f"Error updating child order: {e}")
         return jsonify({"error": "Failed to update child order"}), 500
+
+
+@app.route('/node/<id>/toggle-visibility', methods=['POST'])
+def toggle_visibility(id):
+    try:
+        data = request.json
+        visible = data.get('visible', True)
+        node_ref = db.collection('nodes').document(id)
+        node_ref.update({"visible": visible})
+        return jsonify({"message": f"Visibility updated to {visible}"}), 200
+    except Exception as e:
+        return jsonify({"error": "Failed to update visibility"}), 500
 
 
 @app.route('/test-cors', methods=['GET'])

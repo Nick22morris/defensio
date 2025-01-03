@@ -139,16 +139,19 @@ const HierarchyNavigator = ({ onNodeChange }) => {
       <div className="navigator-content">
         {currentNode?.children?.length > 0 ? (
           <div className="child-list">
-            {currentNode.children.map((childNode) => (
-              <CellComponent
-                key={childNode.id}
-                title={childNode.title}
-                notes={childNode.notes || ''}
-                onClick={() => handleCellClick(childNode)}
-                hasChildren={childNode.children && childNode.children.length > 0}
-                isSelected={selectedNode === childNode.id}
-              />
-            ))}
+            {/* Filter out hidden nodes */}
+            {currentNode.children
+              .filter((childNode) => childNode.visible !== false) // Exclude nodes with visible: false
+              .map((childNode) => (
+                <CellComponent
+                  key={childNode.id}
+                  title={childNode.title}
+                  notes={childNode.notes || ''}
+                  onClick={() => handleCellClick(childNode)}
+                  hasChildren={childNode.children && childNode.children.length > 0}
+                  isSelected={selectedNode === childNode.id}
+                />
+              ))}
           </div>
         ) : (
           <div className="expanded-single-view">

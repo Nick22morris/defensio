@@ -88,6 +88,11 @@ html, body {
   margin-bottom: 10px;
   min-width: fit-content;
 }
+.hidden-indicator {
+  color: #ff5722;
+  font-size: 0.9em;
+  margin-left: 10px;
+}
 
 .hierarchy-item {
   cursor: pointer;
@@ -190,6 +195,10 @@ html, body {
   margin-top: 8px;
   /* Adds vertical spacing between buttons */
 }
+.icon-button.toggle {
+  background-color: #ffc107;
+}
+
 
 .icon-button.save {
   background-color: #28a745;

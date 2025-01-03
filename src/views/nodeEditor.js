@@ -143,6 +143,17 @@ const NodeEditor = () => {
       nodeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
+  const handleToggleVisibility = async (node) => {
+    try {
+      const newVisibility = !node.visible;
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/node/${node.id}/toggle-visibility`, {
+        visible: newVisibility,
+      });
+      setSelectedNode({ ...node, visible: newVisibility });
+    } catch (error) {
+      console.error('Failed to toggle visibility:', error);
+    }
+  };
 
   const handleSave = async () => {
     if (!selectedNode) return;
@@ -195,6 +206,7 @@ const NodeEditor = () => {
       body: '',
       notes: '',
       parent_id: selectedNode.id,
+      visible: true,
     };
     const addedChild = await addChildNode(selectedNode.id, newChild);
     setSelectedNode((prev) => ({
@@ -244,15 +256,17 @@ const NodeEditor = () => {
 
   const renderHierarchy = (node, level = 0) => (
     <div
-      id={`node-${node.id}`} // Assign an ID to each node for reference
+      id={`node-${node.id}`}
       className="tree-node"
       key={node.id}
-      style={{ paddingLeft: `${level * 20}px` }}>
+      style={{ paddingLeft: `${level * 20}px` }}
+    >
       <div
         className={`hierarchy-item ${selectedNode?.id === node.id ? 'selected' : ''}`}
         onClick={() => handleSelectNode(node)}
       >
         {node.title}
+        {node.visible === false && <span className="hidden-indicator">(Hidden)</span>}
       </div>
       {node.children?.length > 0 && (
         <div className="tree-children">
@@ -261,6 +275,8 @@ const NodeEditor = () => {
       )}
     </div>
   );
+
+
 
   if (!rootNode) return <LoadingMessage message="Loading..." />;
 
@@ -330,6 +346,10 @@ const NodeEditor = () => {
                   onEditorChange={(content) => setNotes(content)}
                 />
               </label>
+              <button onClick={() => handleToggleVisibility(selectedNode)} className="icon-button">
+                {selectedNode?.visible ? 'Hide Node' : 'Show Node'}
+              </button>
+
               <button className="icon-button save" onClick={handleSave}>
                 Save Changes
               </button>
