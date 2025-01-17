@@ -85,7 +85,6 @@ html, body {
 .tree-node {
   display: flex;
   flex-direction: column;
-  margin-bottom: 10px;
   min-width: fit-content;
 }
 .hidden-indicator {
@@ -95,23 +94,27 @@ html, body {
 }
 
 .hierarchy-item {
+  display: flex;
+  align-items: center;
   cursor: pointer;
-  padding: 10px;
-  margin-bottom: 5px;
   border-radius: 6px;
   background-color: white;
   transition: background-color 0.2s ease;
 }
-
-.hierarchy-item:hover {
-  background-color: #e6f0ff;
+.hierarchy-title {
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 6px;
 }
-
-.hierarchy-item.selected {
+.hierarchy-title:hover {
+  background-color: #e6f0ff;
+  padding: 10px;
+}
+.hierarchy-title.selected {
   background-color: #445e78;
   color: white;
+  padding: 10px;
 }
-
 .tree-children {
   margin-left: 20px;
   border-left: 1px solid #d1d9e6;

@@ -70,6 +70,7 @@ const NodeEditor = () => {
 
   const [showSaveMessage, setShowSaveMessage] = useState(false);
   const [isLoading, setLoading] = useState(false);
+  const [expandedNodes, setExpandedNodes] = useState({});
 
   // State for resizable panels
   const [treeWidth, setTreeWidth] = useState(550); // Initial width of hierarchy tree
@@ -239,7 +240,12 @@ const NodeEditor = () => {
     if (!isResizing) return;
     setTreeWidth(Math.max(200, e.clientX)); // Ensure a minimum width of 200px
   };
-
+  const handleToggleExpand = (nodeId) => {
+    setExpandedNodes((prev) => ({
+      ...prev,
+      [nodeId]: !prev[nodeId],
+    }));
+  };
   useEffect(() => {
     if (isResizing) {
       window.addEventListener('mousemove', handleMouseMove);
@@ -254,27 +260,45 @@ const NodeEditor = () => {
     };
   }, [isResizing]);
 
-  const renderHierarchy = (node, level = 0) => (
-    <div
-      id={`node-${node.id}`}
-      className="tree-node"
-      key={node.id}
-      style={{ paddingLeft: `${level * 20}px` }}
-    >
+  const renderHierarchy = (node, level = 0) => {
+    // Root node is expanded by default; others are collapsed unless toggled
+    const isExpanded = expandedNodes[node.id] || (level === 0 && expandedNodes[node.id] !== false);
+
+    return (
       <div
-        className={`hierarchy-item ${selectedNode?.id === node.id ? 'selected' : ''}`}
-        onClick={() => handleSelectNode(node)}
+        id={`node-${node.id}`}
+        className="tree-node"
+        key={node.id}
+        style={{ paddingLeft: `${level * 20}px` }}
       >
-        {node.title}
-        {node.visible === false && <span className="hidden-indicator">(Hidden)</span>}
-      </div>
-      {node.children?.length > 0 && (
-        <div className="tree-children">
-          {node.children.map((child) => renderHierarchy(child, level + 1))}
+        <div className="hierarchy-item">
+          <span
+            onClick={() => handleToggleExpand(node.id)}
+            style={{
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              marginRight: '10px',
+            }}
+          >
+            {node.children?.length > 0 ? (isExpanded ? '-' : '+') : ''}
+          </span>
+          <span
+            onClick={() => handleSelectNode(node)}
+            className={`hierarchy-title ${selectedNode?.id === node.id ? 'selected' : ''
+              }`}
+          >
+            {node.title}
+          </span>
+          {node.visible === false && <span className="hidden-indicator">(Hidden)</span>}
         </div>
-      )}
-    </div>
-  );
+        {isExpanded && node.children?.length > 0 && (
+          <div className="tree-children">
+            {node.children.map((child) => renderHierarchy(child, level + 1))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
 
 
