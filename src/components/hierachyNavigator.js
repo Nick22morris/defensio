@@ -2,14 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CellComponent from './cell';
 import '../App.css';
 import '../css/hierarchy-navigator.css';
-
-const fetchNode = async (id) => {
-  const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/node/${id}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch node');
-  }
-  return response.json();
-};
+import { fetchAndBuildTree } from '../accessFiles';
 
 // Initialize a global BroadcastChannel
 const channel = new BroadcastChannel('node-updates');
@@ -26,7 +19,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
 
     const fetchRootNode = async () => {
       try {
-        const rootNode = await fetchNode('root'); // Assuming 'root' is the ID for the root node
+        const rootNode = await fetchAndBuildTree(); // Assuming 'root' is the ID for the root node
         if (isMounted) {
           setCurrentNode(rootNode);
           setIsLoading(false);

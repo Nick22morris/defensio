@@ -5,14 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import GuidelineViewer from './guidelineView';
 import axios from 'axios';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { fetchAndBuildTree } from '../accessFiles';
 
-const fetchNode = async (id) => {
-  const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/node/${id}`);
-  if (!response.ok) {
-    throw new Error('Network response was not ok');
-  }
-  return response.json();
-};
+// removed fetchNode in favor of fetchAndBuildTree
 
 const updateNodeProperty = async (id, updates) => {
   try {
@@ -78,7 +73,7 @@ const NodeEditor = () => {
 
   useEffect(() => {
     // Fetch the root node when the component mounts
-    fetchNode('root')
+    fetchAndBuildTree()
       .then((node) => {
         setRootNode(node);
         setSelectedNode(node);
@@ -168,7 +163,7 @@ const NodeEditor = () => {
 
 
       // Fetch the updated hierarchy from the server
-      const updatedRootNode = await fetchNode("root");
+      const updatedRootNode = await fetchAndBuildTree();
 
       // Update the root node state
       setRootNode(updatedRootNode);

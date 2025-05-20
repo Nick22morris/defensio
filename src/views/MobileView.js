@@ -1,69 +1,107 @@
-import React from "react";
-import "../css/mobile.css";
+import React, { useEffect, useState } from 'react';
+import '../css/mobile.css';
+import { fetchAndBuildTree } from '../accessFiles';
 
-import sun from "../assets/sun.png";
-import cloud1 from "../assets/cloud1.png";
-import cloud2 from "../assets/cloud2.png";
-import shepherd from "../assets/shepherd.png";
+// Removed fetchNode in favor of fetchAndBuildTree
 
-const MobileWarningScreen = () => {
-    return (
-        <div className="scene">
-            {/* Sun */}
-            <img src={sun} alt="Sun" className="sun" />
+const MobileView = () => {
+    const [currentNode, setCurrentNode] = useState(null);
+    const [history, setHistory] = useState([]);
+    const [selectedNode, setSelectedNode] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-            {/* Clouds */}
-            <img src={cloud1} alt="Cloud" className="cloud cloud1" />
-            <img src={cloud2} alt="Cloud" className="cloud cloud2" />
+    useEffect(() => {
+        const load = async () => {
+            try {
+                setIsLoading(true);
+                const root = await fetchAndBuildTree();
+                setCurrentNode(root);
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        load();
+    }, []);
 
-            {/* Text in the Sky */}
-            <div
-                className="sky-text"
-                style={{
-                    position: "absolute",
-                    top: "20%",
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    textAlign: "center",
-                    color: "white",
-                }}
-            >
-                <h1
-                    className="sky-title"
-                    style={{
-                        fontSize: "20px",
-                        fontWeight: "bold",
-                        textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
-                    }}
-                >
-                    "He leads me beside still waters; He restores my soul."
-                </h1>
-                <p
-                    className="sky-citation"
-                    style={{
-                        fontSize: "10px",
-                        marginTop: "5px",
-                        fontStyle: "italic",
-                        color: "#f0f8ff",
-                    }}
-                >
-                    Psalm 23:2-3
-                </p>
-                <p
-                    className="sky-subtext"
-                    style={{
-                        fontSize: "14px",
-                        marginTop: "10px",
-                        fontStyle: "italic",
-                        color: "#f8f9fa",
-                        textShadow: "1px 1px 3px rgba(0, 0, 0, 0.2)",
-                    }}
-                >
-                    Let the Shepherd guide you to a bigger view. Please switch to a desktop.
-                </p>
+    const handleChildClick = (child) => {
+        if (child.children?.length > 0) {
+            setHistory([...history, currentNode]);
+            setCurrentNode(child);
+            setSelectedNode(null);
+        } else {
+            setSelectedNode(child);
+        }
+    };
+
+    const handleBack = () => {
+        if (history.length > 0) {
+            const prev = history[history.length - 1];
+            setCurrentNode(prev);
+            setHistory(history.slice(0, -1));
+            setSelectedNode(null);
+        }
+    };
+
+    const handleCloseModal = () => setSelectedNode(null);
+
+    if (isLoading) {
+        return (
+            <div className="mobile-launch-screen">
+                <img src="/logo2.png" alt="Loading Icon" className="mobile-launch-icon" />
+                <h1>Catholic Defense Hub</h1>
             </div>
+        );
+    }
+
+    return (
+        <div className="mobile-container">
+            <header className="mobile-header">
+                <h1>Catholic Defense Hub</h1>
+                <div className="mobile-actions">
+                    {history.length > 0 && <button onClick={handleBack}>Back</button>}
+                    {currentNode?.notes && (
+                        <button onClick={() => setSelectedNode(currentNode)}>Show Notes</button>
+                    )}
+                </div>
+            </header>
+
+            <main className="mobile-main">
+                <ul className="mobile-list">
+                    {currentNode?.children?.map(
+                        (child) =>
+                            child.visible !== false && (
+                                <li key={child.id}>
+                                    <button className="mobile-item" onClick={() => handleChildClick(child)}>
+                                        {child.title}
+                                    </button>
+                                </li>
+                            )
+                    )}
+                </ul>
+            </main>
+
+            {selectedNode && (
+                <div className="mobile-modal">
+                    <div className="mobile-modal-content">
+                        <h2>{selectedNode.title}</h2>
+                        <div className="mobile-notes">
+                            <div dangerouslySetInnerHTML={{ __html: selectedNode.body || '' }} />
+                            {selectedNode.notes && (
+                                <>
+                                    <br />
+                                    <strong>Notes:</strong>
+                                    <div dangerouslySetInnerHTML={{ __html: selectedNode.notes }} />
+                                </>
+                            )}
+                        </div>
+                        <button onClick={handleCloseModal}>Close</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
-export default MobileWarningScreen;
+export default MobileView;
