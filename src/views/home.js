@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { isUserLoggedIn } from '../utils/auth'; // adjust path as needed
 import HierarchyNavigator from '../components/hierachyNavigator';
 import NotesView from '../components/noteView';
 import '.././css/home.css';
@@ -6,6 +7,11 @@ import GlowingCrossWithQuotes from '../components/cross'
 const Home = () => {
   const [currentNode, setCurrentNode] = useState(null);
   const [isSidebarVisible, setSidebarVisible] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setLoggedIn(isUserLoggedIn());
+  }, []);
 
   const toggleSidebar = () => setSidebarVisible(!isSidebarVisible);
 
@@ -18,6 +24,26 @@ const Home = () => {
           <p className="hq-header-subtitle">
             Your frontline resource for defending the <i>One True Faith</i>.
           </p>
+        </div>
+        <div className="hq-header-login">
+          {loggedIn ? (
+            <>
+              <button className="hq-login-button" onClick={() => {
+                // Clear session/cookies/etc. and refresh
+                localStorage.clear();
+                window.location.reload();
+              }}>
+                Logout
+              </button>
+              <button className="hq-login-button" style={{ marginLeft: '10px' }} onClick={() => window.location.href = '/edit'}>
+                Edit Mode
+              </button>
+            </>
+          ) : (
+            <button className="hq-login-button" onClick={() => window.location.href = '/login'}>
+              Log In
+            </button>
+          )}
         </div>
       </header>
 

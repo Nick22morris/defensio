@@ -9,10 +9,23 @@ const channel = new BroadcastChannel('node-updates');
 
 const HierarchyNavigator = ({ onNodeChange }) => {
   const [currentNode, setCurrentNode] = useState(null);
+  const [rootNode, setRootNode] = useState(null);
   const [history, setHistory] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [flatNodes, setFlatNodes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const flattenTree = (node) => {
+    const all = [node];
+    if (node.children) {
+      node.children.forEach((child) => {
+        all.push(...flattenTree(child));
+      });
+    }
+    return all;
+  };
 
   useEffect(() => {
     let isMounted = true; // To prevent state updates if the component unmounts
@@ -22,6 +35,8 @@ const HierarchyNavigator = ({ onNodeChange }) => {
         const rootNode = await fetchAndBuildTree(); // Assuming 'root' is the ID for the root node
         if (isMounted) {
           setCurrentNode(rootNode);
+          setRootNode(rootNode);
+          setFlatNodes(flattenTree(rootNode));
           setIsLoading(false);
 
           // Only call `onNodeChange` and `sendNodeToViewer` after state is updated
@@ -55,20 +70,19 @@ const HierarchyNavigator = ({ onNodeChange }) => {
   };
 
   const handleCellClick = (childNode) => {
-    if (selectedNode === childNode.id) {
-      // Deselect the currently selected node
-      setSelectedNode(null);
-      onNodeChange(currentNode);
-      sendNodeToViewer(currentNode);
-    } else if (childNode.children?.length > 0) {
-      // Navigate deeper into the hierarchy
+    if (childNode.children?.length > 0 || childNode.children_order?.length > 0) {
+      setSearchQuery('');
+      const childWithChildren = {
+        ...childNode,
+        children: childNode.children_order?.map(id =>
+          flatNodes.find(n => n.id === id)).filter(Boolean)
+      };
       setHistory([...history, currentNode]);
-      setCurrentNode(childNode);
-      setSelectedNode(null); // Clear any selection when navigating
-      onNodeChange(childNode);
-      sendNodeToViewer(childNode);
+      setCurrentNode(childWithChildren);
+      setSelectedNode(null);
+      onNodeChange(childWithChildren);
+      sendNodeToViewer(childWithChildren);
     } else {
-      // Highlight the clicked node if it has no children
       setSelectedNode(childNode.id);
       onNodeChange(childNode);
       sendNodeToViewer(childNode);
@@ -84,6 +98,15 @@ const HierarchyNavigator = ({ onNodeChange }) => {
       onNodeChange(previousNode);
       sendNodeToViewer(previousNode);
     }
+  };
+
+  const handleHomeClick = () => {
+    setSearchQuery('');
+    setHistory([]);
+    setCurrentNode(rootNode);
+    setSelectedNode(null);
+    onNodeChange(rootNode);
+    sendNodeToViewer(rootNode);
   };
 
   useEffect(() => {
@@ -105,6 +128,17 @@ const HierarchyNavigator = ({ onNodeChange }) => {
   if (error) {
     return <div>Error: {error}</div>;
   }
+
+  const nodesToDisplay = (searchQuery ? flatNodes : currentNode?.children || []).filter((childNode) => {
+    if (childNode.visible === false) return false;
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    return (
+      childNode.title?.toLowerCase().includes(q) ||
+      childNode.notes?.toLowerCase().includes(q) ||
+      childNode.body?.toLowerCase().includes(q)
+    );
+  });
 
   return (
     <div className="navigator-container">
@@ -128,23 +162,39 @@ const HierarchyNavigator = ({ onNodeChange }) => {
         </button>
       )}
 
+      <div >
+        <input
+          type="text"
+          className="hq-search-input"
+          placeholder="Search topics..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        {searchQuery && (
+          <button onClick={handleHomeClick} className="back-button">
+            Home
+          </button>
+        )}
+      </div>
+
       {/* Node List or Single View */}
       <div className="navigator-content">
-        {currentNode?.children?.length > 0 ? (
+        {nodesToDisplay.length > 0 ? (
           <div className="child-list">
-            {/* Filter out hidden nodes */}
-            {currentNode.children
-              .filter((childNode) => childNode.visible !== false) // Exclude nodes with visible: false
-              .map((childNode) => (
-                <CellComponent
-                  key={childNode.id}
-                  title={childNode.title}
-                  notes={childNode.notes || ''}
-                  onClick={() => handleCellClick(childNode)}
-                  hasChildren={childNode.children && childNode.children.length > 0}
-                  isSelected={selectedNode === childNode.id}
-                />
-              ))}
+            {nodesToDisplay.map((childNode) => (
+              <CellComponent
+                key={childNode.id}
+                title={childNode.title}
+                notes={childNode.notes || ''}
+                onClick={() => handleCellClick(childNode)}
+                hasChildren={childNode.children && childNode.children.length > 0}
+                isSelected={selectedNode === childNode.id}
+              />
+            ))}
+          </div>
+        ) : searchQuery ? (
+          <div className="expanded-single-view">
+            <h3 className="expanded-title">Nothing Found</h3>
           </div>
         ) : (
           <div className="expanded-single-view">

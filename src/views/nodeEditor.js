@@ -302,7 +302,15 @@ const NodeEditor = () => {
   return (
     <div className="node-editor-container">
       <div className="top-header">
-        <GuidelineViewer />
+        <div className="editor-header-bar">
+          <div className="editor-logo">
+            <div className="editor-logo-main">Catholic Defense Hub</div>
+            <div className="editor-logo-sub">Editor Mode</div>
+          </div>
+          <div className="editor-controls">
+            <GuidelineViewer />
+          </div>
+        </div>
       </div>
       <div className="main-content">
         <div

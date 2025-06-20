@@ -6,8 +6,10 @@
   font-family: 'Roboto', sans-serif;
   background: linear-gradient(to bottom, #1c2833, #2c3e50);
   color: #f9fafb;
-  margin: 0 auto; /* Center the container */
-  max-width: 100%; /* Allow full width */
+  margin: 0 auto;
+  /* Center the container */
+  max-width: 100%;
+  /* Allow full width */
 }
 
 /* Header */
@@ -41,21 +43,27 @@
 /* Main Content */
 .hq-main {
   display: grid;
-  grid-template-columns: 20vw 36vw 36vw; /* Adjusted for better balance */
-  width: 100vw; /* Constrain the layout width */
+  grid-template-columns: 20vw 36vw 36vw;
+  /* Adjusted for better balance */
+  width: 100vw;
+  /* Constrain the layout width */
   gap: 2vw;
   flex-grow: 1;
   padding: 2vw;
   background: #34495e;
-  transition: grid-template-columns 1s ease; /* Smooth resizing */
-  margin: 0 auto; /* Center the main grid */
+  transition: grid-template-columns 1s ease;
+  /* Smooth resizing */
+  margin: 0 auto;
+  /* Center the main grid */
 }
 
 .hq-main.collapsed-sidebar {
-  grid-template-columns: 0vw 40vw 50vw; /* Evenly distribute space when collapsed */
+  grid-template-columns: 0vw 40vw 50vw;
+  /* Evenly distribute space when collapsed */
 }
 
-.hq-navigator, .hq-notes {
+.hq-navigator,
+.hq-notes {
   transition: width 1s ease;
 }
 
@@ -75,6 +83,7 @@
 .hq-toggle-sidebar:hover {
   background: #1c2833;
 }
+
 /* Sidebar */
 .hq-sidebar {
   background: #2c3e50;
@@ -85,7 +94,8 @@
   flex-direction: column;
   align-items: center;
   transition: transform 0.3s ease, opacity 0.3s ease;
-  transform: translateX(0); /* Fully visible by default */
+  transform: translateX(0);
+  /* Fully visible by default */
   opacity: 1;
 }
 
@@ -93,7 +103,8 @@
   transform: translateX(-100%);
   opacity: 0;
   transition: transform 1s ease, opacit 1s ease;
-  height: 10%; /* Maintain consistent height when hidden */
+  height: 10%;
+  /* Maintain consistent height when hidden */
 }
 
 .hq-sidebar-logo {
@@ -109,11 +120,14 @@
 
 /* Navigator Section */
 .hq-navigator {
-  background: #2c3e50; /* Slightly lighter shade of the dark blue */
+  background: #2c3e50;
+  /* Slightly lighter shade of the dark blue */
   border-radius: 12px;
   padding: 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-  color: #f9fafb; /* Light text for readability */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  /* Subtle shadow for depth */
+  color: #f9fafb;
+  /* Light text for readability */
   overflow-y: auto;
 }
 
@@ -126,13 +140,16 @@
 
 /* Notes Section */
 .hq-notes {
-  background: #2c3e50; /* Match the center card background */
-  color: #f9fafb; /* Light text for readability */
+  background: #2c3e50;
+  /* Match the center card background */
+  color: #f9fafb;
+  /* Light text for readability */
   border-radius: 12px;
   padding: 25px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
 }
+
 .hq-notes.visible {
   opacity: 1;
   transform: translateY(0);
@@ -141,15 +158,18 @@
 .hq-notes-header {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #ecf0f1; /* Slightly brighter text for headers */
+  color: #ecf0f1;
+  /* Slightly brighter text for headers */
   padding-bottom: 10px;
   margin-bottom: 10px;
-  border-bottom: 2px solid #56687a; /* Subtle divider */
+  border-bottom: 2px solid #56687a;
+  /* Subtle divider */
 }
 
 .notes-box {
   padding: 20px;
-  background: #4b5968; /* Slightly darker background for boxes */
+  background: #4b5968;
+  /* Slightly darker background for boxes */
   border-radius: 8px;
   color: #f9fafb;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -159,6 +179,7 @@
   font-size: 1rem;
   line-height: 1.6;
 }
+
 /* Body Content for Notes */
 .hq-body-content {
   font-size: 1rem;
@@ -186,8 +207,34 @@
   font-size: 0.9rem;
   border-top: 3px solid #2980b9;
 }
+
 .hq-sidebar,
 .hq-navigator,
 .hq-notes {
   border: 1px solid #445e78;
+}
+
+/* Log In Button and Placement */
+.hq-header-login {
+  position: absolute;
+  top: 25px;
+  right: 30px;
+  z-index: 10;
+}
+
+.hq-login-button {
+  padding: 8px 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  background-color: transparent;
+  color: white;
+  border: 2px solid white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.hq-login-button:hover {
+  background-color: white;
+  color: #2c3e50;
 }

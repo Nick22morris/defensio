@@ -2,7 +2,8 @@
   padding: 20px;
   display: flex;
   flex-direction: column;
-  background-color: #445e78; /* Muted grey-blue for less brightness */
+  background-color: #445e78;
+  /* Muted grey-blue for less brightness */
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   font-family: 'Arial', sans-serif;
@@ -35,26 +36,32 @@
 .back-button:hover {
   background-color: #1c2833;
 }
+
 .child-list {
   display: flex;
   flex-direction: column;
-  gap: 15px; /* Add more spacing between cells */
+  gap: 15px;
+  /* Add more spacing between cells */
 }
 
 .child-list .cell {
-  background: #4b5968; /* Medium blue for cell background */
-  border: 1px solid #2c3e50; /* Darker border for definition */
+  background: #4b5968;
+  /* Medium blue for cell background */
+  border: 1px solid #2c3e50;
+  /* Darker border for definition */
   padding: 18px 20px;
   border-radius: 8px;
   font-size: 1.1rem;
   font-weight: 500;
-  color: #f9fafb; /* Light text */
+  color: #f9fafb;
+  /* Light text */
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .child-list .cell:hover {
-  background: #56687a; /* Slightly brighter blue on hover */
+  background: #56687a;
+  /* Slightly brighter blue on hover */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -65,7 +72,8 @@
 
 .expanded-single-view {
   padding: 20px;
-  background-color: #f4f6f8; /* Same light grey for continuity */
+  background-color: #f4f6f8;
+  /* Same light grey for continuity */
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   text-align: left;
@@ -90,6 +98,7 @@
   color: #555;
   line-height: 1.6;
 }
+
 /* Spinner Container */
 .hq-loading-spinner {
   display: flex;
@@ -97,7 +106,8 @@
   align-items: center;
   justify-content: first baseline;
   margin-top: 10vh;
-  height: 100%; /* Ensures it fills the parent */
+  height: 100%;
+  /* Ensures it fills the parent */
   text-align: center;
 }
 
@@ -105,7 +115,8 @@
 .hq-loading-icon {
   width: 80px;
   height: auto;
-  animation: spin 2s linear infinite; /* Smooth rotation */
+  animation: spin 2s linear infinite;
+  /* Smooth rotation */
   filter: drop-shadow(0 0 10px #2980b9);
 }
 
@@ -114,6 +125,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -124,14 +136,38 @@
   font-size: 1.2rem;
   margin-top: 15px;
   color: #ecf0f1;
-  animation: fade-in-out 3s infinite; /* Subtle blinking effect */
+  animation: fade-in-out 3s infinite;
+  /* Subtle blinking effect */
 }
 
 @keyframes fade-in-out {
-  0%, 100% {
+
+  0%,
+  100% {
     opacity: 0.5;
   }
+
   50% {
     opacity: 1;
   }
+}
+
+/* Search Bar Styles */
+
+.hq-search-input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  color: #2c3e50;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hq-search-input:focus {
+  outline: none;
+  border-color: #2980b9;
+  box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.15);
 }

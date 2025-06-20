@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -8,19 +9,61 @@ html, body {
   background-color: #f9fafb;
 }
 
-/* Top header for Home button */
+/* Top header with stacked title and improved button spacing */
 .top-header {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  padding: 10px 20px;
+  padding: 0;
   background: linear-gradient(to right, #2c3e50, #1c2833);
-  /* Matches button color */
   border-bottom: 3px solid #2980b9;
   width: 100%;
   box-sizing: border-box;
-  /* Rounded top corners */
 }
+
+.editor-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
+.editor-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.editor-logo-main {
+  font-size: 22px;
+  font-weight: 600;
+  color: white;
+}
+
+.editor-logo-sub {
+  font-size: 14px;
+  font-weight: 400;
+  color: #d6e1ec;
+  margin-top: 2px;
+}
+
+.top-header .guideline-button {
+  padding: 8px 24px;
+  font-size: 15px;
+  background: #445e78;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-left: 12px;
+}
+
+.top-header .guideline-button:hover {
+  background-color: #0056b3;
+}
+
 /* Shared button styles for Home and Modal buttons */
 .top-header .home-button,
 .top-header .modal-button {
@@ -32,7 +75,8 @@ html, body {
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
-  margin-right: 10px; /* Space between buttons */
+  margin-right: 10px;
+  /* Space between buttons */
 }
 
 .top-header .home-button:hover,
@@ -45,12 +89,14 @@ html, body {
 .main-content {
   display: flex;
   width: 100%;
-  height: calc(100% - 60px);  /* Adjust for header height */
+  height: calc(100% - 60px);
+  /* Adjust for header height */
   gap: 20px;
   padding: 10px;
   background-color: #f9fafb;
   box-sizing: border-box;
-  overflow: hidden; /* Prevent layout overflow */
+  overflow: hidden;
+  /* Prevent layout overflow */
 }
 
 /* Ensure the NodeEditor takes up the full viewport */
@@ -65,14 +111,16 @@ html, body {
 
 /* Hierarchy tree layout */
 .hierarchy-tree {
-  overflow-y: auto; /* Allow scrolling when content overflows */
+  overflow-y: auto;
+  /* Allow scrolling when content overflows */
   border: 1px solid #d1d9e6;
   padding: 20px;
   border-radius: 8px;
   background-color: white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
   box-sizing: border-box;
-  height: 88vh; /* Match the editor wrapper height */
+  height: 88vh;
+  /* Match the editor wrapper height */
 }
 
 .hierarchy-tree h3 {
@@ -87,6 +135,7 @@ html, body {
   flex-direction: column;
   min-width: fit-content;
 }
+
 .hidden-indicator {
   color: #ff5722;
   font-size: 0.9em;
@@ -101,20 +150,24 @@ html, body {
   background-color: white;
   transition: background-color 0.2s ease;
 }
+
 .hierarchy-title {
   cursor: pointer;
   padding: 10px;
   border-radius: 6px;
 }
+
 .hierarchy-title:hover {
   background-color: #e6f0ff;
   padding: 10px;
 }
+
 .hierarchy-title.selected {
   background-color: #445e78;
   color: white;
   padding: 10px;
 }
+
 .tree-children {
   margin-left: 20px;
   border-left: 1px solid #d1d9e6;
@@ -126,12 +179,14 @@ html, body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* Allow vertical scrolling within the editor if needed */
+  overflow-y: auto;
+  /* Allow vertical scrolling within the editor if needed */
   border: 1px solid #d1d9e6;
   border-radius: 8px;
   background-color: white;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-  height: 88vh; /* Ensure the editor takes up the full height */
+  height: 88vh;
+  /* Ensure the editor takes up the full height */
   max-height: 100%;
 }
 
@@ -198,6 +253,7 @@ html, body {
   margin-top: 8px;
   /* Adds vertical spacing between buttons */
 }
+
 .icon-button.toggle {
   background-color: #ffc107;
 }
@@ -230,6 +286,7 @@ html, body {
   list-style: none;
   margin-top: 10px;
 }
+
 .child-item {
   display: flex;
   justify-content: space-between;
@@ -280,7 +337,8 @@ html, body {
   font-size: 1.5rem;
   padding: 10px;
   border-radius: 10px;
-  z-index: 9999; /* Ensures it appears above other content */
+  z-index: 9999;
+  /* Ensures it appears above other content */
 }
 
 /* Spinner Container */
@@ -293,14 +351,16 @@ html, body {
   align-items: center;
   text-align: center;
   transform: translate(-50%, -50%);
-  z-index: 9999; /* Ensures it appears above other content */
+  z-index: 9999;
+  /* Ensures it appears above other content */
 }
 
 /* Rotating Icon */
 .loading-icon {
   width: 80px;
   height: auto;
-  animation: spin 2s linear infinite; /* Smooth rotation */
+  animation: spin 2s linear infinite;
+  /* Smooth rotation */
   filter: drop-shadow(0 0 10px #34495e);
 }
 
@@ -309,6 +369,7 @@ html, body {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -319,5 +380,6 @@ html, body {
   font-size: 1.2rem;
   margin-top: 15px;
   color: #34495e;
-  animation: fade-in-out 3s infinite; /* Subtle blinking effect */
+  animation: fade-in-out 3s infinite;
+  /* Subtle blinking effect */
 }
