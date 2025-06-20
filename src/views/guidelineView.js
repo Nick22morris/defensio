@@ -49,7 +49,7 @@ const GuidelineViewer = () => {
                             <iframe
                                 width="100%"
                                 height="300"
-                                src="https://www.youtube.com/embed/Aw3MuKIICS8"
+                                src="https://www.youtube.com/embed/w5w_sO8BwFc"
                                 title="Catholic Defense Hub - Editing Walkthrough"
                                 frameBorder="0"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
