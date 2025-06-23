@@ -11,6 +11,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
   const [currentNode, setCurrentNode] = useState(null);
   const [rootNode, setRootNode] = useState(null);
   const [history, setHistory] = useState([]);
+  const [breadcrumbs, setBreadcrumbs] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -78,6 +79,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
           flatNodes.find(n => n.id === id)).filter(Boolean)
       };
       setHistory([...history, currentNode]);
+      setBreadcrumbs([...breadcrumbs, currentNode]);
       setCurrentNode(childWithChildren);
       setSelectedNode(null);
       onNodeChange(childWithChildren);
@@ -94,6 +96,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
       const previousNode = history[history.length - 1];
       setCurrentNode(previousNode);
       setHistory(history.slice(0, -1));
+      setBreadcrumbs(breadcrumbs.slice(0, -1));
       setSelectedNode(null); // Clear selection when navigating back
       onNodeChange(previousNode);
       sendNodeToViewer(previousNode);
@@ -103,10 +106,20 @@ const HierarchyNavigator = ({ onNodeChange }) => {
   const handleHomeClick = () => {
     setSearchQuery('');
     setHistory([]);
+    setBreadcrumbs([]);
     setCurrentNode(rootNode);
     setSelectedNode(null);
     onNodeChange(rootNode);
     sendNodeToViewer(rootNode);
+  };
+
+  const handleBreadcrumbClick = (node, index) => {
+    setCurrentNode(node);
+    setHistory(history.slice(0, index));
+    setBreadcrumbs(breadcrumbs.slice(0, index));
+    setSelectedNode(null);
+    onNodeChange(node);
+    sendNodeToViewer(node);
   };
 
   useEffect(() => {
@@ -142,6 +155,27 @@ const HierarchyNavigator = ({ onNodeChange }) => {
 
   return (
     <div className="navigator-container">
+      {breadcrumbs.length > 0 && currentNode && (
+        <div className="breadcrumbs">
+          <span className="breadcrumb-link" onClick={handleHomeClick}>Home</span>
+          {breadcrumbs
+            .filter((node, index, arr) => !(index === 0 && node.title === 'Home'))
+            .map((node, index) => (
+              <React.Fragment key={node.id}>
+                <span className="breadcrumb-separator">➔</span>
+                <span
+                  className="breadcrumb-link"
+                  onClick={() => handleBreadcrumbClick(node, index + 1)}
+                >
+                  {node.title}
+                </span>
+              </React.Fragment>
+            ))}
+          <span className="breadcrumb-separator">➔</span>
+          <span className="breadcrumb-current">{currentNode.title}</span>
+        </div>
+      )}
+
       {/* Back Button */}
       {history.length > 0 && (
         <button onClick={handleBackClick} className="back-button">

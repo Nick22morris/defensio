@@ -306,3 +306,35 @@ mark {
   transform: translateX(-100%);
   transition: all 300ms ease;
 }
+
+/* Mobile Breadcrumbs */
+.mobile-breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  font-size: 14px;
+  color: white;
+  gap: 4px;
+  padding: 8px 16px;
+}
+
+.mobile-breadcrumb-link {
+  font-weight: bold;
+  cursor: pointer;
+  color: white;
+  transition: text-decoration 0.2s ease;
+}
+
+.mobile-breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.mobile-breadcrumb-separator {
+  color: #ccc;
+  margin: 0 4px;
+}
+
+.mobile-breadcrumb-current {
+  font-weight: bold;
+  color: white;
+}

@@ -7,6 +7,7 @@ import { fetchAndBuildTree } from '../accessFiles';
 const MobileView = () => {
     const [currentNode, setCurrentNode] = useState(null);
     const [history, setHistory] = useState([]);
+    const [breadcrumbs, setBreadcrumbs] = useState([]);
     const [selectedNode, setSelectedNode] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [allNodes, setAllNodes] = useState([]);
@@ -42,6 +43,7 @@ const MobileView = () => {
     const handleChildClick = (child) => {
         if (child.children?.length > 0) {
             setHistory([...history, currentNode]);
+            setBreadcrumbs([...breadcrumbs, currentNode]);
             setCurrentNode(child);
             setSearchQuery('');
             setSelectedNode(null);
@@ -55,6 +57,7 @@ const MobileView = () => {
             const prev = history[history.length - 1];
             setCurrentNode(prev);
             setHistory(history.slice(0, -1));
+            setBreadcrumbs(breadcrumbs.slice(0, -1));
             setSelectedNode(null);
         }
     };
@@ -89,21 +92,41 @@ const MobileView = () => {
                         className="mobile-search-input"
                     />
                 </div>
-                <div className="mobile-actions">
-                    {history.length > 0 && <button onClick={handleBack}>Back</button>}
-                    {currentNode?.id !== 'root' && (
-                        <button onClick={() => {
+                {currentNode && currentNode.id !== 'root' && (
+                    <div className="mobile-breadcrumbs">
+                        <span className="mobile-breadcrumb-link" onClick={() => {
                             setSearchQuery('');
                             setHistory([]);
                             setSelectedNode(null);
+                            setBreadcrumbs([]);
                             fetchAndBuildTree().then((root) => {
                                 setCurrentNode(root);
                                 setAllNodes(flattenTree(root));
                             });
-                        }}>
-                            Home
-                        </button>
-                    )}
+                        }}>Home</span>
+                        {breadcrumbs
+                            .filter((node, _, arr) => node.title !== 'Home')
+                            .map((node, index) => (
+                                <React.Fragment key={node.id}>
+                                    <span className="mobile-breadcrumb-separator">➔</span>
+                                    <span
+                                        className="mobile-breadcrumb-link"
+                                        onClick={() => {
+                                            setCurrentNode(node);
+                                            setHistory(history.slice(0, index));
+                                            setBreadcrumbs(breadcrumbs.slice(0, index));
+                                            setSelectedNode(null);
+                                        }}
+                                    >
+                                        {node.title}
+                                    </span>
+                                </React.Fragment>
+                            ))}
+                        <span className="mobile-breadcrumb-separator">➔</span>
+                        <span className="mobile-breadcrumb-current">{currentNode.title}</span>
+                    </div>
+                )}
+                <div className="mobile-actions">
                     {currentNode?.notes && (
                         <button onClick={() => setSelectedNode(currentNode)}>Show Notes</button>
                     )}

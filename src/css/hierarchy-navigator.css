@@ -171,3 +171,34 @@
   border-color: #2980b9;
   box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.15);
 }
+
+.breadcrumbs {
+  font-size: 14px;
+  color: #ecf0f1;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.breadcrumb-link {
+  cursor: pointer;
+  color: #ffffff;
+  font-weight: bold;
+  text-decoration: none;
+  transition: text-decoration 0.2s ease;
+}
+
+.breadcrumb-link:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb-separator {
+  margin: 0 4px;
+  color: #bdc3c7;
+}
+
+.breadcrumb-current {
+  font-weight: bold;
+  color: #ffffff;
+}
