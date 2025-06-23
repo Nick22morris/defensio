@@ -13,6 +13,9 @@ const MobileView = () => {
     const [allNodes, setAllNodes] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [isModalClosing, setIsModalClosing] = useState(false);
+    const [feedback, setFeedback] = useState('');
+    const [showSuggestionInput, setShowSuggestionInput] = useState(false);
+    const [submissionStatus, setSubmissionStatus] = useState(null); // 'success' | 'error'
 
     const flattenTree = (node) => {
         const all = [node];
@@ -67,6 +70,8 @@ const MobileView = () => {
         setTimeout(() => {
             setSelectedNode(null);
             setIsModalClosing(false);
+            setShowSuggestionInput(false);
+            setFeedback('');
         }, 300); // Match with CSS duration
     };
 
@@ -194,7 +199,55 @@ const MobileView = () => {
                                 </>
                             )}
                         </div>
+                        {!showSuggestionInput && (
+                            <button
+                                className="mobile-suggestion-toggle"
+                                onClick={() => setShowSuggestionInput(true)}
+                            >
+                                Suggest a Correction
+                            </button>
+                        )}
+                        {showSuggestionInput && (
+                            <div className="mobile-suggestion-section">
+                                <textarea
+                                    className="mobile-suggestion-textarea"
+                                    placeholder="Suggest a correction..."
+                                    value={feedback}
+                                    onChange={(e) => setFeedback(e.target.value)}
+                                />
+                                <button
+                                    className="mobile-suggestion-submit"
+                                    onClick={async () => {
+                                        if (feedback?.trim()) {
+                                            try {
+                                                const { db } = await import('../firebaseConfig');
+                                                const { collection, addDoc } = await import('firebase/firestore');
+                                                await addDoc(collection(db, 'noteFeedback'), {
+                                                    nodeId: selectedNode.id,
+                                                    nodeTitle: selectedNode.title,
+                                                    feedback: feedback.trim(),
+                                                    timestamp: new Date()
+                                                });
+                                                setFeedback('');
+                                                setSubmissionStatus('success');
+                                                setTimeout(() => setSubmissionStatus(null), 3000);
+                                            } catch (error) {
+                                                setSubmissionStatus('error');
+                                                setTimeout(() => setSubmissionStatus(null), 3000);
+                                            }
+                                        }
+                                    }}
+                                >
+                                    Submit Suggestion
+                                </button>
+                            </div>
+                        )}
                     </div>
+                </div>
+            )}
+            {submissionStatus && (
+                <div className={`mobile-submission-popup ${submissionStatus}`}>
+                    {submissionStatus === 'success' ? 'Suggestion submitted!' : 'Failed to submit suggestion.'}
                 </div>
             )}
         </div>

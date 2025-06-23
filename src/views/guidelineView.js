@@ -28,7 +28,7 @@ const GuidelineViewer = () => {
     };
 
     return (
-        <div>
+        <>
             <div className="editor-controls">
                 <button onClick={() => navigate('/')} className="guideline-button">
                     Home
@@ -36,9 +36,11 @@ const GuidelineViewer = () => {
                 <button onClick={toggleModal} className="guideline-button">
                     Help
                 </button>
+                <button onClick={() => window.dispatchEvent(new CustomEvent('toggleSuggestions'))} className="guideline-button">
+                    Suggestions
+                </button>
             </div>
 
-            {/* Modal Overlay */}
             {isOpen && (
                 <div className="modal-overlay" onClick={handleOverlayClick}>
                     <div className="modal-content">
@@ -56,7 +58,6 @@ const GuidelineViewer = () => {
                                 allowFullScreen
                             ></iframe>
                         </div>
-                        {/* "Done" Button */}
                         <div className="modal-footer">
                             <button onClick={toggleModal} className="done-button">
                                 Done
@@ -65,7 +66,7 @@ const GuidelineViewer = () => {
                     </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

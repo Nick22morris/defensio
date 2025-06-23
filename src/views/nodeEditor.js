@@ -6,6 +6,12 @@ import GuidelineViewer from './guidelineView';
 import axios from 'axios';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { fetchAndBuildTree } from '../accessFiles';
+import { collection, getDocs, getFirestore, query, orderBy, deleteDoc } from 'firebase/firestore';
+import { initializeApp } from 'firebase/app';
+import { firebaseConfig } from '../firebaseConfig';
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // removed fetchNode in favor of fetchAndBuildTree
 
@@ -67,9 +73,28 @@ const NodeEditor = () => {
   const [isLoading, setLoading] = useState(false);
   const [expandedNodes, setExpandedNodes] = useState({});
 
+  // Suggestions sidebar state
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [expandedSuggestion, setExpandedSuggestion] = useState(null);
+
   // State for resizable panels
   const [treeWidth, setTreeWidth] = useState(550); // Initial width of hierarchy tree
   const [isResizing, setIsResizing] = useState(false); // Track if resizing is active
+  // Fetch suggestions from Firestore on mount
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      try {
+        const suggestionsRef = query(collection(db, 'noteFeedback'), orderBy('timestamp', 'desc'));
+        const snapshot = await getDocs(suggestionsRef);
+        const results = snapshot.docs.map(doc => doc.data());
+        setSuggestions(results);
+      } catch (err) {
+        console.error('Failed to fetch suggestions:', err);
+      }
+    };
+    fetchSuggestions();
+  }, []);
 
   useEffect(() => {
     // Fetch the root node when the component mounts
@@ -82,6 +107,13 @@ const NodeEditor = () => {
         setNotes(node.notes || '');
       })
       .catch(console.error);
+  }, []);
+
+  // Listen for custom event from GuidelineViewer to toggle suggestions
+  useEffect(() => {
+    const toggleHandler = () => setShowSuggestions(prev => !prev);
+    window.addEventListener('toggleSuggestions', toggleHandler);
+    return () => window.removeEventListener('toggleSuggestions', toggleHandler);
   }, []);
 
   useEffect(() => {
@@ -312,7 +344,67 @@ const NodeEditor = () => {
           </div>
         </div>
       </div>
+
       <div className="main-content">
+
+        {/* Suggestions Sidebar */}
+        {showSuggestions && (
+          <div className="suggestions-sidebar suggestions-panel slide-in">
+            <div className="suggestions-header">
+              <h3 className="suggestions-title">Suggestions</h3>
+              <button className="close-button" onClick={() => setShowSuggestions(false)}>×</button>
+            </div>
+            {suggestions.length === 0 ? (
+              <p>No suggestions found.</p>
+            ) : (
+              <ul className="suggestion-list">
+                {suggestions.map((s, idx) => (
+                  <li key={idx} className="suggestion-item suggestion-card">
+                    <div
+                      className="suggestion-title"
+                      onClick={() => {
+                        const findNode = (node, id) => {
+                          if (node.id === id) return node;
+                          for (const child of node.children || []) {
+                            const found = findNode(child, id);
+                            if (found) return found;
+                          }
+                          return null;
+                        };
+                        const matched = findNode(rootNode, s.nodeId);
+                        if (matched) handleSelectNode(matched);
+                        setExpandedSuggestion(s);
+                      }}
+                    >
+                      <strong>{s.nodeTitle || 'Untitled Node'}</strong>
+                    </div>
+
+                    {expandedSuggestion?.nodeId === s.nodeId && (
+                      <div className="suggestion-body-text">
+                        <p>{s.feedback}</p>
+                        <button
+                          className="dismiss-button"
+                          onClick={async () => {
+                            const snapshot = await getDocs(collection(db, 'noteFeedback'));
+                            const match = snapshot.docs.find(
+                              d => d.data().nodeId === s.nodeId && d.data().feedback === s.feedback
+                            );
+                            if (match) await deleteDoc(match.ref);
+                            setSuggestions(prev => prev.filter(x => x !== s));
+                            setExpandedSuggestion(null);
+                          }}
+                        >
+                          Dismiss
+                        </button>
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
         <div
           className="hierarchy-tree"
           style={{

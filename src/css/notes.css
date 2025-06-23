@@ -24,39 +24,136 @@
 /* Main Lists */
 .notes-content ol,
 .notes-content ul {
-    margin: 10px 0; /* Add slight vertical spacing */
-    padding-left: 20px; /* Indent main lists slightly */
-    list-style-position: outside; /* Ensure bullets/numbers align correctly */
+    margin: 10px 0;
+    /* Add slight vertical spacing */
+    padding-left: 20px;
+    /* Indent main lists slightly */
+    list-style-position: outside;
+    /* Ensure bullets/numbers align correctly */
 }
 
 /* Nested Lists */
-.notes-content ol li > ol,
-.notes-content ul li > ul {
-    margin-top: 5px; /* Add slight spacing for nested lists */
-    padding-left: 20px; /* Increase indentation for nested lists */
-    list-style-type: circle; /* Change bullet style for nested unordered lists */
-    font-size: 15px; /* Slightly smaller font for nested lists */
+.notes-content ol li>ol,
+.notes-content ul li>ul {
+    margin-top: 5px;
+    /* Add slight spacing for nested lists */
+    padding-left: 20px;
+    /* Increase indentation for nested lists */
+    list-style-type: circle;
+    /* Change bullet style for nested unordered lists */
+    font-size: 15px;
+    /* Slightly smaller font for nested lists */
 }
 
 /* Adjust Nested List Items */
-.notes-content ol li > ol li,
-.notes-content ul li > ul li {
-    margin-bottom: 5px; /* Add consistent spacing between nested list items */
+.notes-content ol li>ol li,
+.notes-content ul li>ul li {
+    margin-bottom: 5px;
+    /* Add consistent spacing between nested list items */
 }
 
 /* Bullet and Number Styling */
 .notes-content ul {
-    list-style-type: disc; /* Use discs for unordered lists */
+    list-style-type: disc;
+    /* Use discs for unordered lists */
 }
 
 .notes-content ul ul {
-    list-style-type: circle; /* Use circles for nested unordered lists */
+    list-style-type: circle;
+    /* Use circles for nested unordered lists */
 }
 
 .notes-content ol {
-    list-style-type: decimal; /* Ensure ordered lists display correctly */
+    list-style-type: decimal;
+    /* Ensure ordered lists display correctly */
 }
 
 .notes-content ol ol {
-    list-style-type: lower-alpha; /* Use alphabetic markers for nested ordered lists */
+    list-style-type: lower-alpha;
+    /* Use alphabetic markers for nested ordered lists */
+}
+
+/* Feedback Modal Feature */
+.feedback-button {
+    margin-top: 1rem;
+    padding: 8px 16px;
+    background: #34495e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.feedback-button:hover {
+    background-color: #4f79a2;
+}
+
+.feedback-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.feedback-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 90%;
+    width: 400px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.feedback-modal-content h3 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.feedback-modal-content textarea {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    margin-bottom: 1rem;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: left;
+    gap: 10px;
+}
+
+.modal-actions button {
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.modal-actions button:first-child {
+    background-color: #34495e;
+    color: white;
+}
+
+.modal-actions button:last-child {
+    background-color: #34495e;
+    color: white;
+}
+
+.feedback-confirmation {
+    font-size: 16px;
+    color: #2c3e50;
+    text-align: center;
+    padding: 20px;
 }

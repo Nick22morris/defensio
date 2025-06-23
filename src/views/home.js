@@ -44,6 +44,13 @@ const Home = () => {
               Log In
             </button>
           )}
+          <button
+            className="hq-login-button"
+            style={{ marginLeft: '10px' }}
+            onClick={() => window.open('https://soleministries.org/donate', '_blank')}
+          >
+            Donate
+          </button>
         </div>
       </header>
 
@@ -72,8 +79,8 @@ const Home = () => {
           {currentNode?.notes || currentNode?.body ? (
             <>
               <div className="hq-notes-header">{currentNode?.title || 'No Topic Selected'}</div>
-              {currentNode?.body && <NotesView notes={currentNode.body} />}
-              {currentNode?.notes && <NotesView notes={currentNode.notes} />}
+              {currentNode?.body && <NotesView notes={currentNode.body} nodeId={currentNode.id} nodeTitle={currentNode.title} />}
+              {currentNode?.notes && <NotesView notes={currentNode.notes} nodeId={currentNode.id} nodeTitle={currentNode.title} />}
             </>
           ) : (
             <GlowingCrossWithQuotes />
