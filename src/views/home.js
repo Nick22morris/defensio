@@ -47,9 +47,9 @@ const Home = () => {
           <button
             className="hq-login-button"
             style={{ marginLeft: '10px' }}
-            onClick={() => window.open('https://soleministries.org/donate', '_blank')}
+            onClick={() => window.open('https://soleministries.org/give', '_blank')}
           >
-            Donate
+            Give
           </button>
         </div>
       </header>

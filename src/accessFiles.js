@@ -1,5 +1,3 @@
-
-
 import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { initializeApp, getApps } from "firebase/app";
 import { firebaseConfig } from "./firebaseConfig.js";
@@ -27,7 +25,8 @@ export async function fetchAndBuildTree() {
             notes: data.notes || '',
             parent_id: data.parent_id || null,
             title: data.title,
-            visible: data.visible !== false, // default to true if missing
+            visible: data.visible !== false,
+            address: data.address || null,
         });
     });
 
@@ -54,5 +53,70 @@ export async function fetchAndBuildTree() {
     });
 
     // Return the root node
+    return nodeMap["root"];
+}
+
+export async function fetchAndBuildPublicTree() {
+    const snapshot = await getDocs(collection(db, "nodes"));
+    const flatNodes = [];
+
+    snapshot.forEach((doc) => {
+        const data = doc.data();
+        flatNodes.push({
+            id: data.id,
+            body: data.body,
+            children_order: data.children_order || [],
+            index: data.index || 0,
+            notes: data.notes || '',
+            parent_id: data.parent_id || null,
+            title: data.title,
+            visible: data.visible !== false,
+            address: data.address || null,
+        });
+    });
+
+    const nodeMap = {};
+    flatNodes.forEach((node) => {
+        node.children = [];
+        nodeMap[node.id] = node;
+    });
+
+    // Replace pointers with referenced nodes
+    flatNodes.forEach((node, i) => {
+        if (node.address && nodeMap[node.address]) {
+            const target = nodeMap[node.address];
+            flatNodes[i] = {
+                ...target,
+                id: node.id, // maintain original id
+                title: target.title,
+                parent_id: node.parent_id,
+                children_order: node.children_order || [],
+                visible: node.visible,
+                notes: target.notes,
+                body: target.body,
+                address: node.address,
+            };
+            nodeMap[node.id] = flatNodes[i];
+        }
+    });
+
+    // Reassign children relationships
+    flatNodes.forEach((node) => {
+        node.children = [];
+    });
+
+    flatNodes.forEach((node) => {
+        const parentId = node.parent_id;
+        if (parentId && nodeMap[parentId]) {
+            nodeMap[parentId].children.push(node);
+        }
+    });
+
+    flatNodes.forEach((node) => {
+        node.children = node.children_order
+            .map((childId) => nodeMap[childId])
+            .filter(Boolean);
+    });
+
     return nodeMap["root"];
 }

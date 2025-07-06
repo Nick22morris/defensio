@@ -6,7 +6,7 @@ import GuidelineViewer from './guidelineView';
 import axios from 'axios';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { fetchAndBuildTree } from '../accessFiles';
-import { collection, getDocs, getFirestore, query, orderBy, deleteDoc } from 'firebase/firestore';
+import { collection, getDocs, getFirestore, query, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../firebaseConfig';
 
@@ -68,6 +68,10 @@ const NodeEditor = () => {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [notes, setNotes] = useState('');
+  // Reference/copy state
+  const [linkTargetId, setLinkTargetId] = useState('');
+  // All nodes for link search
+  const [allNodes, setAllNodes] = useState([]);
 
   const [showSaveMessage, setShowSaveMessage] = useState(false);
   const [isLoading, setLoading] = useState(false);
@@ -77,6 +81,14 @@ const NodeEditor = () => {
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [expandedSuggestion, setExpandedSuggestion] = useState(null);
+
+  // Ensure search input is populated after allNodes is available if the node has an address
+  useEffect(() => {
+    if (selectedNode?.address && allNodes.length > 0) {
+      const target = allNodes.find(n => n.id === selectedNode.address);
+      if (target) setLinkTargetId(target.title);
+    }
+  }, [selectedNode, allNodes]);
 
   // State for resizable panels
   const [treeWidth, setTreeWidth] = useState(550); // Initial width of hierarchy tree
@@ -105,6 +117,15 @@ const NodeEditor = () => {
         setTitle(node.title);
         setBody(node.body || '');
         setNotes(node.notes || '');
+        // Flatten all nodes for autocomplete
+        const flattenNodes = (n) => {
+          const result = [n];
+          for (const child of n.children || []) {
+            result.push(...flattenNodes(child));
+          }
+          return result;
+        };
+        setAllNodes(flattenNodes(node));
       })
       .catch(console.error);
   }, []);
@@ -165,6 +186,13 @@ const NodeEditor = () => {
     setTitle(node.title);
     setBody(node.body || '');
     setNotes(node.notes || '');
+    // If node.address is set, find the corresponding title and set it in linkTargetId
+    if (node.address) {
+      const target = allNodes.find(n => n.id === node.address);
+      setLinkTargetId(target?.title || '');
+    } else {
+      setLinkTargetId('');
+    }
 
     const nodeElement = document.getElementById(`node-${node.id}`);
     if (nodeElement) {
@@ -187,12 +215,28 @@ const NodeEditor = () => {
     if (!selectedNode) return;
 
     const updates = { title, body, notes, children: selectedNode.children };
+    // Reference/copy logic
+    const targetNode = allNodes.find(n => n.title === linkTargetId);
+    const isLinking = !!targetNode;
+    if (isLinking) {
+      updates.title = `${targetNode.title} (copy)`;
+      updates.address = targetNode.id;
+      setTitle(updates.title); // update UI immediately
+    } else {
+      updates.address = null;
+    }
 
     try {
       setLoading(true);
       // Save updates to the selected node, including the new order of children
       await updateNodeProperty(selectedNode.id, updates);
 
+      // Store the address and title in Firestore
+      const docRef = doc(db, 'nodes', selectedNode.id);
+      await updateDoc(docRef, {
+        address: updates.address || null,
+        title: updates.title,
+      });
 
       // Fetch the updated hierarchy from the server
       const updatedRootNode = await fetchAndBuildTree();
@@ -314,7 +358,7 @@ const NodeEditor = () => {
             className={`hierarchy-title ${selectedNode?.id === node.id ? 'selected' : ''
               }`}
           >
-            {node.title}
+            {node.address ? node.title.replace(/\s*\(copy\)*$/gi, '') + ' (copy)' : node.title}
           </span>
           {node.visible === false && <span className="hidden-indicator">(Hidden)</span>}
         </div>
@@ -426,95 +470,152 @@ const NodeEditor = () => {
           }}
         ></div>
         <div className="editor-wrapper">
-          {selectedNode ? (
-            <div className="editor-panel">
-              <h3>Edit Node: {selectedNode.title}</h3>
-              <label>
-                Title:
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                />
-              </label>
-              <label>
-                Display:
-                <Editor
-                  apiKey="jyoilj77xozk21jg7wxt1k5t9a0u7nisp896b6lmsyhd826j"
-                  value={body}
-                  init={{
-                    height: 300,
-                    menubar: true,
-                    plugins: 'advlist autolink lists link image charmap preview anchor searchreplace code fullscreen table help wordcount',
-                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-                  }}
-                  onEditorChange={(content) => setBody(content)}
-                />
-              </label>
-              <label>
-                Notes:
-                <Editor
-                  apiKey="jyoilj77xozk21jg7wxt1k5t9a0u7nisp896b6lmsyhd826j"
-                  value={notes}
-                  init={{
-                    height: 300,
-                    menubar: true,
-                    plugins: 'advlist autolink lists link image charmap preview anchor searchreplace code fullscreen table help wordcount',
-                    toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-                  }}
-                  onEditorChange={(content) => setNotes(content)}
-                />
-              </label>
-              <button onClick={() => handleToggleVisibility(selectedNode)} className="icon-button">
-                {selectedNode?.visible ? 'Hide Node' : 'Show Node'}
-              </button>
-
-              <button className="icon-button save" onClick={handleSave}>
-                Save Changes
-              </button>
-              <h4>Manage Children</h4>
-              <button className="icon-button add" onClick={handleAddChild}>
-                Add Child
-              </button>
-              <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="child-list">
-                  {(provided) => (
-                    <ul
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                      className="child-list"
-                    >
-                      {selectedNode?.children?.map((child, index) => (
-                        <Draggable
-                          key={child.id.toString()}
-                          draggableId={child.id.toString()}
-                          index={index}
-                        >
-                          {(provided) => (
-                            <li
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              {...provided.dragHandleProps}
-                              className="child-item"
-                            >
-                              {child.title}
-                              <button
-                                className="icon-button delete"
-                                onClick={() => handleRemoveChild(child.id)}
-                              >
-                                Remove
-                              </button>
-                            </li>
-                          )}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
+          {selectedNode ? (() => {
+            // Compute isLinking: true if selectedNode.address is set
+            const isLinking = !!selectedNode?.address;
+            return (
+              <div className="editor-panel">
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+                  <button className="icon-button save" onClick={handleSave}>
+                    Save Changes
+                  </button>
+                </div>
+                <h3>Edit Node: {selectedNode.title}</h3>
+                <label>
+                  Title:
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                  />
+                </label>
+                {/* Explanatory text above the search input for referencing */}
+                <div style={{ marginTop: '10px', position: 'relative' }}>
+                  <p style={{ marginBottom: '4px', color: '#555' }}>
+                    Reference another node (search by title):
+                  </p>
+                  <input
+                    type="text"
+                    placeholder="Search by title"
+                    value={linkTargetId}
+                    onChange={(e) => setLinkTargetId(e.target.value)}
+                    style={{ width: '100%', padding: '8px', marginBottom: '5px' }}
+                  />
+                  {linkTargetId && !allNodes.some(n => n.title === linkTargetId) && (
+                    <ul style={{ position: 'absolute', top: '100%', backgroundColor: 'white', zIndex: 1000, border: '1px solid #ccc', width: '100%', maxHeight: '150px', overflowY: 'auto' }}>
+                      {allNodes
+                        .filter(n => n.title.toLowerCase().includes(linkTargetId.toLowerCase()) && n.id !== selectedNode?.id)
+                        .slice(0, 10)
+                        .map(n => (
+                          <li
+                            key={n.id}
+                            style={{ padding: '5px', cursor: 'pointer' }}
+                            onClick={() => {
+                              setLinkTargetId(n.title);
+                            }}
+                          >
+                            {n.title}
+                          </li>
+                        ))}
                     </ul>
                   )}
-                </Droppable>
-              </DragDropContext>
-            </div>
-          ) : (
+                </div>
+
+                {isLinking && (
+                  <button
+                    className="icon-button delete"
+                    onClick={async () => {
+                      const docRef = doc(db, 'nodes', selectedNode.id);
+                      await updateDoc(docRef, { address: null });
+                      setSelectedNode({ ...selectedNode, address: null });
+                      setLinkTargetId('');
+                    }}
+                  >
+                    Remove Link
+                  </button>
+                )}
+
+                {!isLinking && (
+                  <>
+                    <label>
+                      Display:
+                      <Editor
+                        apiKey="jyoilj77xozk21jg7wxt1k5t9a0u7nisp896b6lmsyhd826j"
+                        value={body}
+                        init={{
+                          height: 300,
+                          menubar: true,
+                          plugins: 'advlist autolink lists link image charmap preview anchor searchreplace code fullscreen table help wordcount',
+                          toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                        }}
+                        onEditorChange={(content) => setBody(content)}
+                      />
+                    </label>
+                    <label>
+                      Notes:
+                      <Editor
+                        apiKey="jyoilj77xozk21jg7wxt1k5t9a0u7nisp896b6lmsyhd826j"
+                        value={notes}
+                        init={{
+                          height: 300,
+                          menubar: true,
+                          plugins: 'advlist autolink lists link image charmap preview anchor searchreplace code fullscreen table help wordcount',
+                          toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                        }}
+                        onEditorChange={(content) => setNotes(content)}
+                      />
+                    </label>
+
+                    <button onClick={() => handleToggleVisibility(selectedNode)} className="icon-button">
+                      {selectedNode?.visible ? 'Hide Node' : 'Show Node'}
+                    </button>
+
+                    <h4>Manage Children</h4>
+                    <button className="icon-button add" onClick={handleAddChild}>
+                      Add Child
+                    </button>
+                    <DragDropContext onDragEnd={handleDragEnd}>
+                      <Droppable droppableId="child-list">
+                        {(provided) => (
+                          <ul
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                            className="child-list"
+                          >
+                            {selectedNode?.children?.map((child, index) => (
+                              <Draggable
+                                key={child.id.toString()}
+                                draggableId={child.id.toString()}
+                                index={index}
+                              >
+                                {(provided) => (
+                                  <li
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    {...provided.dragHandleProps}
+                                    className="child-item"
+                                  >
+                                    {child.title}
+                                    <button
+                                      className="icon-button delete"
+                                      onClick={() => handleRemoveChild(child.id)}
+                                    >
+                                      Remove
+                                    </button>
+                                  </li>
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </ul>
+                        )}
+                      </Droppable>
+                    </DragDropContext>
+                  </>
+                )}
+              </div>
+            );
+          })() : (
             <div className="empty-editor">
               <p>Select a node to edit its details here.</p>
             </div>

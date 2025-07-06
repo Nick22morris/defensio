@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import '../css/mobile.css';
-import { fetchAndBuildTree } from '../accessFiles';
+import { fetchAndBuildPublicTree } from '../accessFiles';
 
 // Removed fetchNode in favor of fetchAndBuildTree
 
@@ -31,9 +31,35 @@ const MobileView = () => {
         const load = async () => {
             try {
                 setIsLoading(true);
-                const root = await fetchAndBuildTree();
-                setCurrentNode(root);
-                setAllNodes(flattenTree(root));
+                const root = await fetchAndBuildPublicTree();
+
+                const resolvedMap = {};
+                const resolveNode = (node) => {
+                    if (node.address && resolvedMap[node.address]) {
+                        return { ...resolvedMap[node.address], id: node.id, title: node.title };
+                    } else if (node.address) {
+                        return { ...node, children: [] }; // fallback
+                    }
+                    const resolvedChildren = (node.children || []).map(resolveNode);
+                    const resolved = { ...node, children: resolvedChildren };
+                    resolvedMap[resolved.id] = resolved;
+                    return resolved;
+                };
+
+                const resolvedRoot = resolveNode(root);
+
+                const flattenTree = (node) => {
+                    const all = [node];
+                    if (node.children) {
+                        node.children.forEach(child => {
+                            all.push(...flattenTree(child));
+                        });
+                    }
+                    return all;
+                };
+
+                setCurrentNode(resolvedRoot);
+                setAllNodes(flattenTree(resolvedRoot));
             } catch (e) {
                 console.error(e);
             } finally {
@@ -44,14 +70,46 @@ const MobileView = () => {
     }, []);
 
     const handleChildClick = (child) => {
-        if (child.children?.length > 0) {
-            setHistory([...history, currentNode]);
-            setBreadcrumbs([...breadcrumbs, currentNode]);
-            setCurrentNode(child);
-            setSearchQuery('');
-            setSelectedNode(null);
-        } else {
-            setSelectedNode(child);
+        const target = child.address
+            ? allNodes.find(n => n.id === child.address)
+            : null;
+
+        const resolved = target
+            ? { ...target, id: child.id, title: child.title }
+            : child;
+
+        // Build the full ancestral path from the root node
+        const buildFullPathToNode = (targetNode, rootNode) => {
+            const path = [];
+
+            const dfs = (node, acc = []) => {
+                if (node.id === targetNode.id) {
+                    path.push(...acc, node);
+                    return true;
+                }
+                if (node.children) {
+                    for (const c of node.children) {
+                        if (dfs(c, [...acc, node])) return true;
+                    }
+                }
+                return false;
+            };
+
+            dfs(rootNode);
+            return path;
+        };
+
+        const newPath = buildFullPathToNode(resolved, allNodes.find(n => n.title === 'Home'));
+        const newBreadcrumbs = newPath.slice(0, -1);
+
+        setHistory([...history, currentNode]);
+        setBreadcrumbs(newBreadcrumbs);
+        setCurrentNode(resolved);
+        setSearchQuery('');
+        setSelectedNode(null);
+
+        if (!resolved.children || resolved.children.length === 0) {
+            setSelectedNode(resolved);
         }
     };
 
@@ -104,7 +162,7 @@ const MobileView = () => {
                             setHistory([]);
                             setSelectedNode(null);
                             setBreadcrumbs([]);
-                            fetchAndBuildTree().then((root) => {
+                            fetchAndBuildPublicTree().then((root) => {
                                 setCurrentNode(root);
                                 setAllNodes(flattenTree(root));
                             });
@@ -117,9 +175,10 @@ const MobileView = () => {
                                     <span
                                         className="mobile-breadcrumb-link"
                                         onClick={() => {
+                                            const fullPath = breadcrumbs.slice(0, index + 1);
                                             setCurrentNode(node);
-                                            setHistory(history.slice(0, index));
-                                            setBreadcrumbs(breadcrumbs.slice(0, index));
+                                            setHistory(fullPath.slice(0, -1));
+                                            setBreadcrumbs(fullPath);
                                             setSelectedNode(null);
                                         }}
                                     >

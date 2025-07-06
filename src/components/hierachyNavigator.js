@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import CellComponent from './cell';
 import '../App.css';
 import '../css/hierarchy-navigator.css';
-import { fetchAndBuildTree } from '../accessFiles';
+import { fetchAndBuildPublicTree } from '../accessFiles';
 
 // Initialize a global BroadcastChannel
 const channel = new BroadcastChannel('node-updates');
@@ -33,7 +33,7 @@ const HierarchyNavigator = ({ onNodeChange }) => {
 
     const fetchRootNode = async () => {
       try {
-        const rootNode = await fetchAndBuildTree(); // Assuming 'root' is the ID for the root node
+        const rootNode = await fetchAndBuildPublicTree(); // Assuming 'root' is the ID for the root node
         if (isMounted) {
           setCurrentNode(rootNode);
           setRootNode(rootNode);
@@ -71,11 +71,21 @@ const HierarchyNavigator = ({ onNodeChange }) => {
   };
 
   const handleCellClick = (childNode) => {
-    if (childNode.children?.length > 0 || childNode.children_order?.length > 0) {
+    const resolveAddress = (node) => {
+      if (node.address) {
+        const target = flatNodes.find(n => n.id === node.address);
+        if (target) return target;
+      }
+      return node;
+    };
+
+    const resolvedNode = resolveAddress(childNode);
+
+    if (resolvedNode.children?.length > 0 || resolvedNode.children_order?.length > 0) {
       setSearchQuery('');
       const childWithChildren = {
-        ...childNode,
-        children: childNode.children_order?.map(id =>
+        ...resolvedNode,
+        children: resolvedNode.children_order?.map(id =>
           flatNodes.find(n => n.id === id)).filter(Boolean)
       };
       setHistory([...history, currentNode]);
@@ -84,10 +94,15 @@ const HierarchyNavigator = ({ onNodeChange }) => {
       setSelectedNode(null);
       onNodeChange(childWithChildren);
       sendNodeToViewer(childWithChildren);
+    } else if (selectedNode === resolvedNode.id) {
+      // Deselect if same leaf node is clicked again
+      setSelectedNode(null);
+      onNodeChange(currentNode);
+      sendNodeToViewer(currentNode);
     } else {
-      setSelectedNode(childNode.id);
-      onNodeChange(childNode);
-      sendNodeToViewer(childNode);
+      setSelectedNode(resolvedNode.id);
+      onNodeChange(resolvedNode);
+      sendNodeToViewer(resolvedNode);
     }
   };
 
@@ -213,7 +228,23 @@ const HierarchyNavigator = ({ onNodeChange }) => {
 
       {/* Node List or Single View */}
       <div className="navigator-content">
-        {nodesToDisplay.length > 0 ? (
+        {currentNode?.address ? (
+          <div className="expanded-single-view">
+            <h3 className="expanded-title">{currentNode.title} (linked)</h3>
+            <button
+              className="back-button"
+              onClick={async () => {
+                const { getFirestore, doc, updateDoc } = await import("firebase/firestore");
+                const { firebaseApp } = await import("../firebaseConfig");
+                const db = getFirestore(firebaseApp);
+                await updateDoc(doc(db, "nodes", currentNode.id), { address: null });
+                window.location.reload(); // simple way to refresh the view
+              }}
+            >
+              Remove Link
+            </button>
+          </div>
+        ) : nodesToDisplay.length > 0 ? (
           <div className="child-list">
             {nodesToDisplay.map((childNode) => (
               <CellComponent

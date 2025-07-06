@@ -5,6 +5,18 @@ import { getAuth, signOut } from 'firebase/auth'; // Import Firebase auth functi
 const GuidelineViewer = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
+    const [suggestionCount, setSuggestionCount] = useState(0);
+
+    React.useEffect(() => {
+        const updateSuggestions = () => {
+            const suggestions = window.suggestions || [];
+            setSuggestionCount(suggestions.length);
+        };
+        updateSuggestions();
+        window.addEventListener('suggestionsUpdated', updateSuggestions);
+        return () => window.removeEventListener('suggestionsUpdated', updateSuggestions);
+    }, []);
+
     const auth = getAuth(); // Initialize Firebase Auth
     const toggleModal = () => {
         setIsOpen(!isOpen);
@@ -36,8 +48,27 @@ const GuidelineViewer = () => {
                 <button onClick={toggleModal} className="guideline-button">
                     Help
                 </button>
-                <button onClick={() => window.dispatchEvent(new CustomEvent('toggleSuggestions'))} className="guideline-button">
+                <button
+                    onClick={() => window.dispatchEvent(new CustomEvent('toggleSuggestions'))}
+                    className="guideline-button"
+                    style={{ position: 'relative' }}
+                >
                     Suggestions
+                    {suggestionCount > 0 && (
+                        <span style={{
+                            position: 'absolute',
+                            top: '-6px',
+                            right: '-10px',
+                            backgroundColor: 'red',
+                            color: 'white',
+                            borderRadius: '50%',
+                            padding: '2px 6px',
+                            fontSize: '0.7rem',
+                            fontWeight: 'bold',
+                        }}>
+                            {suggestionCount}
+                        </span>
+                    )}
                 </button>
             </div>
 
